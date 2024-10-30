@@ -84,7 +84,10 @@ Docker Compose:
 To orchestrate both FastAPI and React services, use Docker Compose.
 Create docker-compose.yml in the root of the project.
 From the root of the project where docker-compose.yml is located
-- docker-compose up --build
+Once the Dockerfile is correctly set up, use this line to build the docker image:
+- docker build -t my-app .
+Then build the docker Container:
+- docker run -d -p 8000:8000 my-app
 This will build and run both containers, and you can access the services as:
 Frontend: http://localhost:3000
 Backend: http://localhost:8000
@@ -106,25 +109,6 @@ Then run
 To run frontend dev server, go to frontend directory and in bash:
 - npm start
 - npm run dev
-
-For Chakra:
-Installation Command:
-- npm i @chakra-ui/react @emotion/react @emotion/styled framer-motion react-icons
-Example:
-
-//
-import { Button } from "@/components/ui/button"
-import { HStack } from "@chakra-ui/react"
-
-const Demo = () => {
-  return (
-    <HStack>
-      <Button>Click me</Button>
-      <Button>Click me</Button>
-    </HStack>
-  )
-}
-//
 
 For MySQL:
 Installation command:
