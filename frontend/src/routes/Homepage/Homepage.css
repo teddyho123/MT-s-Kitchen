@@ -1,0 +1,34 @@
+.home-main {
+    display: flex;
+    flex-direction: column;
+    background-color: rgb(255, 255, 255);
+  }
+
+  .title {
+    font-family:'Gill Sans', 'Gill Sans MT', Calibri, 'Trebuchet MS', sans-serif;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+}
+
+.title2 {
+    font-family:'Gill Sans', 'Gill Sans MT', Calibri, 'Trebuchet MS', sans-serif;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding-bottom: 25px;
+}
+
+.sukiyaki{
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.trending-container {
+    padding-top: 25px;
+    padding-bottom: 25px;
+    border-top-style:groove;
+    background-color: rgb(255, 255, 255);
+}
