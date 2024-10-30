@@ -1,7 +1,48 @@
+import React, { useState } from "react";
 import Navbar from "../../components/Navbar/Navbar"
 import Footer from "../../components/Footer/Footer"
 import "./Newrecipe.css"
 function Newrecipe() {
+
+  // State for dynamically added ingredients
+  const [ingredients, setIngredients] = useState([{ingredient: "", measurement: "", unit: ""}]);
+  const addIngredient = () => {
+    setIngredients([...ingredients, {ingredient: "", measurement: "", unit: ""}]);
+  };
+  // Function to handle input changes for ingredients
+  const handleIngredientChange = (index, event) => {
+    const values = [...ingredients];
+    values[index].ingredient = event.target.value;
+    setIngredients(values);
+  };
+
+  // Function to handle unit selection changes
+  const handleUnitChange = (index, event) => {
+    const values = [...ingredients];
+    values[index].unit = event.target.value;
+    setIngredients(values);
+  };
+
+  // Function to handle input changes for ingredients
+  const handleMeasurementChange = (index, event) => {
+    const values = [...ingredients];
+    values[index].measurement = event.target.value;
+    setIngredients(values);
+  };
+
+  // Function to handle deleting an ingredient input field
+  const removeIngredient = (index) => {
+    const values = [...ingredients];
+    values.splice(index, 1); // Remove the ingredient at the given index
+    setIngredients(values);
+  };
+
+  // Function to handle form submission
+  const handleSubmit = (event) => {
+    event.preventDefault();
+    console.log("Form submitted with ingredients: ", ingredients);
+    // You can proceed with form submission logic here
+  };
   
 
     return (
@@ -42,27 +83,74 @@ function Newrecipe() {
             </div><br />
 
             <div>
-            <label>Ingredient <span className="required-star">*</span></label>
+            <label>Category <span className="required-star">*</span></label>
               <div>
-                <input type="checkbox" id="meat" name="ingredient" value="meat" />
+                <input type="checkbox" id="meat" name="Category" value="meat" />
                 <label htmlFor="meat">Meat</label><br />
               </div>
               <div>
-                <input type="checkbox" id="seafood" name="ingredient" value="seafood" />
+                <input type="checkbox" id="seafood" name="Category" value="seafood" />
                 <label htmlFor="seafood">Seafood</label><br />
               </div>
               <div>
-                <input type="checkbox" id="dairy" name="ingredient" value="dairy" />
+                <input type="checkbox" id="dairy" name="Category" value="dairy" />
                 <label htmlFor="dairy">Dairy</label><br />
               </div>
               <div>
-                <input type="checkbox" id="veggies" name="ingredient" value="veggies" />
+                <input type="checkbox" id="veggies" name="Category" value="veggies" />
                 <label htmlFor="veggies">Veggies</label><br />
               </div>
               <div>
-                <input type="checkbox" id="carbs" name="ingredient" value="carbs" />
+                <input type="checkbox" id="carbs" name="Category" value="carbs" />
                 <label htmlFor="carbs">Carbs</label><br />
               </div>
+            </div><br />
+
+            <label>Recipe Portion <span className="required-star">*</span></label><br />
+            <input type="text" name="portion" placeholder="This recipe is for how many people?" required />
+            <br /><br />
+
+            <div>
+              <label>
+                Ingredients <span className="required-star">*</span>
+              </label>
+              {ingredients.map((ingredient, index) => (
+                <div key={index} style={{ marginBottom: "10px" }}>
+                  <input
+                    type="text"
+                    placeholder={`Measurement`}
+                    value={ingredient.measurement}
+                    onChange={(event) => handleMeasurementChange(index, event)}
+                    style={{marginRight: "10px"}}
+                  />
+                  <select
+                    value={ingredient.unit}
+                    onChange={(event)=>handleUnitChange(index, event)}
+                    >
+                    <option value="">Select Unit</option>
+                    <option value="grams">Grams</option>
+                    <option value="cups">Cups</option>
+                    <option value="tablespoons">Tablespoons</option>
+                    <option value="teaspoons">Teaspoons</option>
+                    <option value="milliliters">Milliliters</option>
+                    <option value="liters">Liters</option>
+                    <option value="pieces">Pieces</option>
+                  </select>
+                  <input
+                    type="text"
+                    placeholder={`Ingredient ${index + 1}`}
+                    value={ingredient.ingredient}
+                    onChange={(event) => handleIngredientChange(index, event)}
+                    style={{margin: "0px 10px"}}
+                  />
+                  <button type="button" onClick={() => removeIngredient(index)} className="btn-delete">
+                    Delete
+                  </button>
+                </div>
+              ))}
+              <button type="button" onClick={addIngredient} className="btn">
+                Add another ingredient
+              </button>
             </div><br />
             
             <label>Quick Description <span className="required-star">*</span></label><br />
