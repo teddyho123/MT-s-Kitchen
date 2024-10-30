@@ -9,3 +9,7 @@ Laid out the each webpages function.
 
 10-29-2024
 Created jsx files for each webpage.
+Discontinued use of Chakra UI for frontend after thorough testing.
+Completed building the navbar, footer, and a portion of the homepage.
+
+10-30-2024

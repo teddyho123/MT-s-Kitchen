@@ -2,6 +2,7 @@ import Navbar from "../../components/Navbar/Navbar"
 import "./Homepage.css"
 import sukiyaki from './sukiyaki.png'
 import paella from './paella.png'
+import Footer from "../../components/Footer/Footer"
 function Homepage() {
     return (
       <main className="home-main">
@@ -20,6 +21,7 @@ function Homepage() {
         <div className="sukiyaki">
           <img src={paella} alt="paella"/>
         </div>
+        <Footer/>
       </main>
     )
   }
