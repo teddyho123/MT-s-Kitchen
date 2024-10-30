@@ -1,83 +1,97 @@
 .nav-container {
-    box-sizing: border-box;
-    height: 80px;
-    display: flex;
-    align-items: center;
-    background-color: rgb(180, 58, 58);
-    justify-content: space-between;
-    padding: 0 0px;
-    box-shadow: 0 4px 4px rgba(180, 37, 37, 0.1);
-    margin-bottom: 20px;
+  box-sizing: border-box;
+  height: 80px;
+  display: flex;
+  align-items: center;
+  background-color: rgb(180, 58, 58);
+  justify-content: space-between;
+  padding: 0 20px; /* Added padding for internal spacing */
+  width: 100vw; /* Make sure it spans the full width of the viewport */
+  max-width: 100%; /* Prevent any overflow */
+  box-shadow: 0 4px 4px rgba(180, 37, 37, 0.1);
+  margin-bottom: 20px;
+}
+
+.nav-container a {
+  text-decoration: none;
+  color: rgb(255, 255, 255);
+}
+
+.nav-container .logo a {
+  display: flex;
+  align-items: center;
+  font-size: 28px;
+}
+
+.nav-container .logo img {
+  width: 60px;
+  height: auto;
+}
+
+.nav-container .logo:hover {
+  cursor: pointer;
+}
+
+.nav-container .hamburger {
+  display: none;
+}
+
+.nav-container .navbar ul {
+  display: flex;
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+.nav-container .navbar ul li {
+  margin: 0 10px;
+}
+
+.nav-container .navbar ul li a {
+  display: block;
+  font-size: 20px;
+  padding: 10px 25px;
+  border-radius: 50px;
+  transition: 0.2s;
+  margin: 0 5px;
+}
+
+.nav-container .navbar ul li a:hover {
+  color: rgb(0, 0, 0);
+}
+
+/* Adjust padding for smaller screens */
+@media only screen and (max-width: 1320px) {
+  .nav-container {
+      padding: 0 50px;
+      width: 100vw; /* Ensure it still spans the full width */
   }
-  
-  .nav-container a {
-    text-decoration: none;
-    color: rgb(255, 255, 255);
+}
+
+@media only screen and (max-width: 1100px) {
+  .nav-container {
+      padding: 0 30px;
+      width: 100vw; /* Ensure it still spans the full width */
   }
-  
-  .nav-container .logo a{
-    display: flex;
-    align-items: center;
-    font-size: 28px;
-  }
-  
-  .nav-container .logo img {
-    width: 60px;
-    height: auto;
-  }
-  
-  .nav-container .logo:hover {
-    cursor: pointer;
-  }
-  
+}
+
+/* Mobile and smaller screen behavior */
+@media only screen and (max-width: 900px) {
   .nav-container .hamburger {
-    display: none;
-  }
-  
-  .nav-container .navbar ul {
-    display: flex;
-    list-style: none;
-  }
-  
-  .nav-container .navbar ul li a {
-    display: block;
-    font-size: 20px;
-    padding: 10px 25px;
-    border-radius: 50px;
-    transition: 0.2s;
-    margin: 0 5px;
-  }
-  
-  .nav-container .navbar ul li a:hover {
-    color: rgb(0, 0, 0)
-  }
-  
-  @media only screen and (max-width: 1320px) {
-    .nav-container {
-        padding: 0 50px;
-      }
-  }
-  
-  @media only screen and (max-width: 1100px) {
-    .nav-container {
-        padding: 0 30px;
-      }
-  }
-  
-  @media only screen and (max-width: 900px) {
-    .nav-container .hamburger {
       display: block;
       cursor: pointer;
-    }
-    .nav-container .hamburger .line {
+  }
+
+  .nav-container .hamburger .line {
       display: block;
       width: 30px;
       height: 3px;
       margin: 6px 0;
       background-color: black;
-    }
-    .nav-container .navbar {
-      height: 0px;
+  }
+
+  .nav-container .navbar {
+      height: 0;
       position: absolute;
       top: 80px;
       left: 0;
@@ -86,23 +100,26 @@
       background-color: white;
       transition: 0.2s;
       overflow: hidden;
-    }
-    .nav-container .navbar.active {
+  }
+
+  .nav-container .navbar.active {
       height: 350px;
-    }
-    .nav-container .navbar ul {
+  }
+
+  .nav-container .navbar ul {
       display: block;
       width: fit-content;
       margin: 80px auto 0 auto;
       text-align: center;
       transition: 0.5s;
       opacity: 0;
-    }
-    .nav-container .navbar.active ul {
+  }
+
+  .nav-container .navbar.active ul {
       opacity: 1;
-    }
-    .nav-container .navbar ul li a {
+  }
+
+  .nav-container .navbar ul li a {
       margin-bottom: 12px;
   }
-  
-  }
+}
