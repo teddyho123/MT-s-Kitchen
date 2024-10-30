@@ -2,3 +2,59 @@
     display: flex;
     flex-direction: column;
   }
+
+.h1 {
+  display: flex;
+  padding: 0 20px;
+}
+
+.button-group {
+  display: flex;
+  justify-content: left;
+  gap: 20px;
+  flex-wrap: wrap;
+  padding : 20px 50px;
+  border-bottom: 2px solid #858282;
+
+}
+
+.button-group button {
+  background-color: #8d2421;
+  padding: 10px;
+  font-size: 16px;
+  border-radius: 15px;
+  cursor: pointer;
+}
+
+.card-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr); 
+  gap: 20px; 
+  padding: 20px;
+  align-items: center;
+}
+
+.card {
+  background-color: #f0f0f0;
+  border: 2px solid #992424;
+  border-radius: 15px;
+  padding: 10px;
+  text-align: center;
+}
+
+.card img {
+  width: 100%;
+  height: auto;
+  border-radius: 10px 10px 0 0;
+}
+
+.card h3 {
+  margin: 10px 0 5px 0;
+  font-size: 18px;
+  color: #333;
+}
+
+.card p {
+  font-size: 14px;
+  color: #555;
+}
