@@ -94,7 +94,7 @@ Backend: http://localhost:8000
 
 For Fast api:
 To run backend dev server, go to backend directory and in bash:
-- uvicorn app.main:app --reload --port 8000
+- python -m uvicorn main:app
 
 For React:
 To download Vite

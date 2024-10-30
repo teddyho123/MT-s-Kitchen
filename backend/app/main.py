@@ -1,13 +1,14 @@
-from typing import Union
-from fastapi import FastAPI
-from pydantic import BaseModel
+from typing import Annotated
+from fastapi import Depends, FastAPI
+from sqlmodel import Session
+from models import create_db_and_tables, get_session
+#/C/Users/ticka/AppData/Local/Programs/Python/Python313/python.exe -m pip install
+
+
+
+SessionDep = Annotated[Session, Depends(get_session)]
 
 app = FastAPI()
 
-@app.get("/")
-def read_root():
-    return {"message": "Hello World"}
-
-@app.get("/items/{item_id}")
-def read_item(item_id: int, q: Union[str, None] = None):
-    return {"item_id": item_id, "q": q}
+async def lifespan():
+    create_db_and_tables()
