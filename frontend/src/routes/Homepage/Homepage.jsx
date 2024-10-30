@@ -1,7 +1,7 @@
 import Navbar from "../../components/Navbar/Navbar"
 import "./Homepage.css"
-import sukiyaki from './sukiyaki.png'
-import paella from './paella.png'
+import sukiyaki from '../../components/Assets/sukiyaki.png'
+import paella from '../../components/Assets/paella.png'
 import Footer from "../../components/Footer/Footer"
 function Homepage() {
     return (
