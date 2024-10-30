@@ -3,16 +3,16 @@
     height: 80px;
     display: flex;
     align-items: center;
-    background-color: white;
+    background-color: rgb(180, 58, 58);
     justify-content: space-between;
-    padding: 0 300px;
-    box-shadow: 0 4px 4px rgba(0, 0, 0, 0.1);
+    padding: 0 0px;
+    box-shadow: 0 4px 4px rgba(180, 37, 37, 0.1);
     margin-bottom: 20px;
   }
   
   .nav-container a {
     text-decoration: none;
-    color: black;
+    color: rgb(255, 255, 255);
   }
   
   .nav-container .logo a{
@@ -49,7 +49,7 @@
   }
   
   .nav-container .navbar ul li a:hover {
-    color: coral
+    color: rgb(0, 0, 0)
   }
   
   @media only screen and (max-width: 1320px) {
