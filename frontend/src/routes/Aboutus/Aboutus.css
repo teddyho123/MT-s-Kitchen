@@ -13,7 +13,7 @@
 }
 
 .about-col{
-  flex-basis: 48%;
+  width: 48%;
   color: #676767;
 }
 
