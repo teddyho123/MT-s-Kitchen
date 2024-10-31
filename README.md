@@ -95,6 +95,7 @@ Backend: http://localhost:8000
 For Fast api:
 To run backend dev server, go to backend directory and in bash:
 - python -m uvicorn main:app
+- fastapi dev main.py
 
 For React:
 To download Vite
@@ -112,6 +113,10 @@ To run frontend dev server, go to frontend directory and in bash:
 
 For MySQL:
 Installation command:
-- pip install aiomysql sqlalchemy
-Example configuration:
-- DATABASE_URL = "mysql://user:password@localhost/dbname"
+- pip install sqlalchemy databases mysql-connector-python
+Then configure database in database.py
+
+To activate virtual environment:
+- python -m venv venv    (setting up)
+- source venv/Scripts/activate      (activating)
+- python -m pip install --upgrade pip     (upgrading pip to latest version)
