@@ -93,9 +93,8 @@ Frontend: http://localhost:3000
 Backend: http://localhost:8000
 
 For Fast api:
-To run backend dev server, go to backend directory and in bash:
-- python -m uvicorn main:app
-- fastapi dev main.py
+To run backend dev server, go to ROOT directory and in bash:
+- uvicorn backend.main:app --reload         *********
 
 For React:
 To download Vite
