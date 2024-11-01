@@ -86,7 +86,7 @@ function Newrecipe() {
     const formDataObj = new FormData();
     formDataObj.append("name", formData.name);
     formData.course.forEach((item) => formDataObj.append("course", item));
-  formData.category.forEach((item) => formDataObj.append("category", item));
+    formData.category.forEach((item) => formDataObj.append("category", item));
     formDataObj.append("portion", formData.portion);
     formDataObj.append("ingredients", JSON.stringify(ingredients));
     formDataObj.append("description", formData.description);
