@@ -1,4 +1,5 @@
 import React, { useState } from "react";
+import { useNavigate } from 'react-router-dom';
 import Navbar from "../../components/Navbar/Navbar"
 import Footer from "../../components/Footer/Footer"
 import "./Newrecipe.css"
@@ -34,32 +35,45 @@ function Newrecipe() {
     setIngredients(values);
   };
 
+
+  const [formData, setFormData] = useState({
+    name: '',
+    course: [],
+    category: [],
+    portion: 1,
+    ingredients: [], // default urgency value
+    description: '',
+    prep: 0,
+    total: 0,
+    img: '',
+    guide: ''
+  });
+
+  const navigate = useNavigate();
+
+
   // Function to handle form submission
   const handleSubmit = async (event) => {
     event.preventDefault();
-    const formData = new FormData(event.target);
-
-    const recipeData = {
-      name: formData.get("name"),
-      course: Array.from(formData.getAll("course")),
-      category: Array.from(formData.getAll("category")),
-      portion: formData.get("portion"),
-      ingredients: ingredients,
-      description: formData.get("description"),
-      prep: parseFloat(formData.get("prep")),
-      total: parseFloat(formData.get("total")),
-      img: formData.get("img") || "No images provided",
-      guide: formData.get("guide") || "No steps provided"
-  };
-
-    console.log("Form submitted with data: ", recipeData);
+    const formDataObj = new FormData();
+  
+    formDataObj.append("name", formData.name);
+    formDataObj.append("course", JSON.stringify(formData.course)); // Array needs to be stringified
+    formDataObj.append("category", JSON.stringify(formData.category));
+    formDataObj.append("portion", formData.portion);
+    formDataObj.append("ingredients", JSON.stringify(ingredients)); // Pass as JSON string
+    formDataObj.append("description", formData.description);
+    formDataObj.append("prep", formData.prep);
+    formDataObj.append("total", formData.total);
+    formDataObj.append("guide", formData.guide);
+    if (formData.img) {
+      formDataObj.append("img", formData.img);
+    }
+  
     try {
-      const response = await fetch("http://127.0.0.1:8000/newrecipe", {
+      const response = await fetch('http://127.0.0.1:8000/newrecipe', {
         method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify(recipeData),
+        body: formDataObj,
       });
   
       if (!response.ok) {
@@ -68,16 +82,13 @@ function Newrecipe() {
   
       const result = await response.json();
       console.log("Recipe created successfully:", result);
-      alert("Recipe created successfully!");
-  
-      // Optionally, reset the form or redirect the user after successful submission
-      event.target.reset();
-      setIngredients([{ ingredient: "", measurement: "", unit: "" }]); // Reset ingredients
+      navigate('./success');
     } catch (error) {
       console.error("Error uploading recipe:", error);
       alert("Failed to create the recipe. Please try again.");
     }
   };
+  
   
 
     return (
