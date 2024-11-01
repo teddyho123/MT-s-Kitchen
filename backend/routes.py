@@ -1,5 +1,5 @@
 # routes.py
-from fastapi import APIRouter, Depends, HTTPException
+from fastapi import APIRouter, Depends, HTTPException, FastAPI, Form, UploadFile, File
 from sqlalchemy.orm import Session
 from backend.database import get_db
 from backend.models import Recipe, User
@@ -13,7 +13,7 @@ class RecipeCreate(BaseModel):
     course: List[str]
     category: List[str]
     portion: int
-    ingredients: List[Dict[str, Union[float, str]]]
+    ingredients: List[Dict[str, Union[str, float]]]
     description: str
     prep: float
     total: float
@@ -52,19 +52,36 @@ class UserResponse(BaseModel):
     class Config:
         orm_mode = True
 
-@router.post("/newrecipe/")
-async def create_recipe(recipe: RecipeCreate, db: Session = Depends(get_db)):
-    print(recipe.dict())  # Print data to server logs for inspection
-    db_recipe = Recipe( name=recipe.name,
-                        course=recipe.course,
-                        category=recipe.category,
-                        portion=recipe.portion,
-                        ingredients=recipe.ingredients,
-                        description=recipe.description,
-                        prep=recipe.prep,
-                        total=recipe.total,
-                        guide=recipe.guide
-                        )
+@router.post("/newrecipe")
+async def create_recipe(
+    name: str = Form(...),
+    course: List[str] = Form(...),
+    category: List[str] = Form(...),
+    portion: int = Form(...),
+    ingredients: str = Form(...),  # Pass as JSON string and parse in the function
+    description: str = Form(...),
+    prep: float = Form(...),
+    total: float = Form(...),
+    guide: str = Form(...),
+    img: UploadFile = File(None),
+    db: Session = Depends(get_db)
+):
+    # Parse ingredients from JSON string if needed
+    import json
+    parsed_ingredients = json.loads(ingredients)
+    
+    db_recipe = Recipe(
+        name=name,
+        course=course,
+        category=category,
+        portion=portion,
+        ingredients=parsed_ingredients,
+        description=description,
+        prep=prep,
+        total=total,
+        img=img,
+        guide=guide
+    )
     db.add(db_recipe)
     db.commit()
     db.refresh(db_recipe)

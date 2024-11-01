@@ -15,21 +15,18 @@ function Newrecipe() {
     values[index].ingredient = event.target.value;
     setIngredients(values);
   };
-
   // Function to handle unit selection changes
   const handleUnitChange = (index, event) => {
     const values = [...ingredients];
     values[index].unit = event.target.value;
     setIngredients(values);
   };
-
   // Function to handle input changes for ingredients
   const handleMeasurementChange = (index, event) => {
     const values = [...ingredients];
     values[index].measurement = event.target.value;
     setIngredients(values);
   };
-
   // Function to handle deleting an ingredient input field
   const removeIngredient = (index) => {
     const values = [...ingredients];
@@ -38,10 +35,48 @@ function Newrecipe() {
   };
 
   // Function to handle form submission
-  const handleSubmit = (event) => {
+  const handleSubmit = async (event) => {
     event.preventDefault();
-    console.log("Form submitted with ingredients: ", ingredients);
-    // You can proceed with form submission logic here
+    const formData = new FormData(event.target);
+
+    const recipeData = {
+      name: formData.get("name"),
+      course: Array.from(formData.getAll("course")),
+      category: Array.from(formData.getAll("category")),
+      portion: formData.get("portion"),
+      ingredients: ingredients,
+      description: formData.get("description"),
+      prep: parseFloat(formData.get("prep")),
+      total: parseFloat(formData.get("total")),
+      img: formData.get("img") || "No images provided",
+      guide: formData.get("guide") || "No steps provided"
+  };
+
+    console.log("Form submitted with data: ", recipeData);
+    try {
+      const response = await fetch("http://127.0.0.1:8000/newrecipe", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(recipeData),
+      });
+  
+      if (!response.ok) {
+        throw new Error(`Error: ${response.statusText}`);
+      }
+  
+      const result = await response.json();
+      console.log("Recipe created successfully:", result);
+      alert("Recipe created successfully!");
+  
+      // Optionally, reset the form or redirect the user after successful submission
+      event.target.reset();
+      setIngredients([{ ingredient: "", measurement: "", unit: "" }]); // Reset ingredients
+    } catch (error) {
+      console.error("Error uploading recipe:", error);
+      alert("Failed to create the recipe. Please try again.");
+    }
   };
   
 
@@ -52,10 +87,10 @@ function Newrecipe() {
           <h1>Upload your recipe!</h1>
           <h2>Fill out the form below and share it with the world!</h2>
 
-          <form action="/upload" method="post" encType="multipart/form-data">
+          <form onSubmit={handleSubmit} method="post" encType="multipart/form-data">
             <br />
             <label>Recipe Name <span className="required-star">*</span></label><br />
-            <input type="text" name="recipe" placeholder="What is the name of your recipe?" required />
+            <input type="text" name="name" placeholder="What is the name of your recipe?" required />
             <br /><br />
 
             <div>
@@ -85,29 +120,29 @@ function Newrecipe() {
             <div>
             <label>Category <span className="required-star">*</span></label>
               <div>
-                <input type="checkbox" id="meat" name="Category" value="meat" />
+                <input type="checkbox" id="meat" name="category" value="meat" />
                 <label htmlFor="meat">Meat</label><br />
               </div>
               <div>
-                <input type="checkbox" id="seafood" name="Category" value="seafood" />
+                <input type="checkbox" id="seafood" name="category" value="seafood" />
                 <label htmlFor="seafood">Seafood</label><br />
               </div>
               <div>
-                <input type="checkbox" id="dairy" name="Category" value="dairy" />
+                <input type="checkbox" id="dairy" name="category" value="dairy" />
                 <label htmlFor="dairy">Dairy</label><br />
               </div>
               <div>
-                <input type="checkbox" id="veggies" name="Category" value="veggies" />
+                <input type="checkbox" id="veggies" name="category" value="veggies" />
                 <label htmlFor="veggies">Veggies</label><br />
               </div>
               <div>
-                <input type="checkbox" id="carbs" name="Category" value="carbs" />
+                <input type="checkbox" id="carbs" name="category" value="carbs" />
                 <label htmlFor="carbs">Carbs</label><br />
               </div>
             </div><br />
 
             <label>Recipe Portion <span className="required-star">*</span></label><br />
-            <input type="text" name="portion" placeholder="This recipe is for how many people?" required />
+            <input type="number" name="portion" placeholder="This recipe is for how many people?" required />
             <br /><br />
 
             <div>
@@ -117,7 +152,8 @@ function Newrecipe() {
               {ingredients.map((ingredient, index) => (
                 <div key={index} style={{ marginBottom: "10px" }}>
                   <input
-                    type="text"
+                    type="number"
+                    step="any"
                     placeholder={`Measurement`}
                     value={ingredient.measurement}
                     onChange={(event) => handleMeasurementChange(index, event)}
@@ -158,19 +194,19 @@ function Newrecipe() {
             <br /><br />
 
             <label>Preperation Time</label><br />
-            <input type="text" name="preptime" placeholder="In hours and minutes" />
+            <input type="number" step="any" name="prep" placeholder="In hours and minutes" />
             <br /><br />
 
             <label>Total Time <span className="required-star">*</span></label><br />
-            <input type="text" name="totaltime" placeholder="In hours and minutes" required />
+            <input type="number" step="any" name="total" placeholder="In hours and minutes" required />
             <br /><br />
 
-            <label>Upload Pictures <span className="required-star">*</span></label><br />
-            <input type="file" id="picture" name="picture" accept="image/*" multiple/>
+            <label>Upload Pictures </label><br />
+            <input type="file" id="img" name="img" accept="image/*" multiple/>
             <br /><br />
 
             <label>Step By Step Guide <span className="required-star">*</span></label><br />
-            <textarea id="steps" name="steps" rows="4" cols="70" placeholder="Write the full recipe" required />
+            <textarea id="guide" name="guide" rows="4" cols="70" placeholder="Write the full recipe" required />
             
             <br /><br /><br /><br />
             <button type="submit">Submit!</button><br /><br />
