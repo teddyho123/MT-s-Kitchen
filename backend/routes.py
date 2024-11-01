@@ -2,7 +2,7 @@
 from fastapi import APIRouter, Depends, HTTPException
 from sqlalchemy.orm import Session
 from backend.database import get_db
-from backend.models import Recipe
+from backend.models import Recipe, User
 from pydantic import BaseModel
 from typing import List, Dict, Union, Optional
 
@@ -32,6 +32,22 @@ class RecipeResponse(BaseModel):
     total: float
     guide: str
     img: Optional[str] = None
+
+    class Config:
+        orm_mode = True
+
+class UserCreate(BaseModel):
+    username: str
+    password: str
+    email: str
+    about: str
+
+class UserResponse(BaseModel):
+    id: int
+    username: str
+    password: str
+    email: str
+    about: str
 
     class Config:
         orm_mode = True
@@ -67,3 +83,48 @@ def read_recipe(recipe_id: int, db: Session = Depends(get_db)):
     if recipe is None:
         raise HTTPException(status_code=404, detail="Recipe not found")
     return recipe
+
+@router.delete("/deleterecipes/{recipe_id}")
+def read_recipe(recipe_id: int, db: Session = Depends(get_db)):
+    recipe = db.query(Recipe).filter(Recipe.id == recipe_id).first()
+    if recipe is None:
+        raise HTTPException(status_code=404, detail="Recipe not found")
+    db.delete(recipe)
+    db.commit()
+    return {"detail": "Recipe deleted successfully"}
+
+@router.post("/newuser")
+async def create_user(user: UserCreate, db: Session = Depends(get_db)):
+    print(user.dict())  # Print data to server logs for inspection
+    db_user = User( username=user.username,
+                    password=user.password,
+                    email=user.email,
+                    about=user.about,
+                        )
+    db.add(db_user)
+    db.commit()
+    db.refresh(db_user)
+    return db_user
+
+@router.get("/user/{user_id}")
+def read_user(user_id: int, db: Session = Depends(get_db)):
+    user = db.query(User).filter(User.id == user_id).first()
+    if user is None:
+        raise HTTPException(status_code=404, detail="User not found")
+    return user
+
+@router.get("/alluser", response_model=List[UserResponse])
+def read_all_users(db: Session = Depends(get_db)):
+    users = db.query(User).all()
+    if not users:
+        raise HTTPException(status_code=404, detail="No user found")
+    return users
+
+@router.delete("/deleteuser/{user_id}")
+def read_user(user_id: int, db: Session = Depends(get_db)):
+    user = db.query(User).filter(User.id == user_id).first()
+    if user is None:
+        raise HTTPException(status_code=404, detail="User not found")
+    db.delete(user)
+    db.commit()
+    return {"detail": "User deleted successfully"}

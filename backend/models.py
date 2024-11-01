@@ -16,3 +16,13 @@ class Recipe(Base):
     total = Column(Float, index=True, nullable=False)
     img = Column(String, index=True)
     guide = Column(String, index=True, nullable=False)
+
+
+class User(Base):
+    __tablename__ = "user"
+
+    id = Column(Integer, primary_key=True, index=True)
+    username = Column(String, index=True, nullable=False)
+    password = Column(String, index=True, nullable=False)
+    email = Column(String, index=True, nullable=False)
+    about = Column(String, index=True, nullable=True)
