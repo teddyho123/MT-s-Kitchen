@@ -51,25 +51,52 @@ function Newrecipe() {
 
   const navigate = useNavigate();
 
+  const handleChange = (event) => {
+    const { name, value, type, checked, files } = event.target;
+  
+    if (type === 'file') {
+      setFormData((prevData) => ({
+        ...prevData,
+        [name]: files[0], // Store the selected file
+      }));
+    } else if (type === 'checkbox') {
+      setFormData((prevData) => {
+        const updatedArray = checked
+          ? [...prevData[name], value] // Add value if checked
+          : prevData[name].filter((item) => item !== value); // Remove value if unchecked
+        return {
+          ...prevData,
+          [name]: updatedArray,
+        };
+      });
+    } else {
+      setFormData((prevData) => ({
+        ...prevData,
+        [name]: value,
+      }));
+    }
+  };
+  
+  
 
   // Function to handle form submission
   const handleSubmit = async (event) => {
     event.preventDefault();
+
     const formDataObj = new FormData();
-  
     formDataObj.append("name", formData.name);
-    formDataObj.append("course", JSON.stringify(formData.course)); // Array needs to be stringified
+    formDataObj.append("course", JSON.stringify(formData.course));
     formDataObj.append("category", JSON.stringify(formData.category));
     formDataObj.append("portion", formData.portion);
-    formDataObj.append("ingredients", JSON.stringify(ingredients)); // Pass as JSON string
+    formDataObj.append("ingredients", JSON.stringify(ingredients));
     formDataObj.append("description", formData.description);
     formDataObj.append("prep", formData.prep);
     formDataObj.append("total", formData.total);
     formDataObj.append("guide", formData.guide);
     if (formData.img) {
-      formDataObj.append("img", formData.img);
+      formDataObj.append("img", formData.img); // Add the image file
     }
-  
+    
     try {
       const response = await fetch('http://127.0.0.1:8000/newrecipe', {
         method: "POST",
@@ -101,29 +128,29 @@ function Newrecipe() {
           <form onSubmit={handleSubmit} method="post" encType="multipart/form-data">
             <br />
             <label>Recipe Name <span className="required-star">*</span></label><br />
-            <input type="text" name="name" placeholder="What is the name of your recipe?" required />
+            <input type="text" name="name" placeholder="What is the name of your recipe?" required value={formData.name} onChange={handleChange} />
             <br /><br />
 
             <div>
             <label>Course <span className="required-star">*</span></label>
               <div>
-                <input type="checkbox" id="breakfast" name="course" value="breakfast" />
+                <input type="checkbox" id="breakfast" name="course" value="breakfast" onChange={handleChange}/>
                 <label htmlFor="breakfast">Breakfast</label><br />
               </div>
               <div>
-                <input type="checkbox" id="brunch" name="course" value="brunch" />
+                <input type="checkbox" id="brunch" name="course" value="brunch" onChange={handleChange}/>
                 <label htmlFor="brunch">Brunch</label><br />
               </div>
               <div>
-                <input type="checkbox" id="lunch" name="course" value="lunch" />
+                <input type="checkbox" id="lunch" name="course" value="lunch" onChange={handleChange}/>
                 <label htmlFor="lunch">Lunch</label><br />
               </div>
               <div>
-                <input type="checkbox" id="dinner" name="course" value="dinner" />
+                <input type="checkbox" id="dinner" name="course" value="dinner" onChange={handleChange}/>
                 <label htmlFor="dinner">Dinner</label><br />
               </div>
               <div>
-                <input type="checkbox" id="dessert" name="course" value="dessert" />
+                <input type="checkbox" id="dessert" name="course" value="dessert" onChange={handleChange}/>
                 <label htmlFor="dessert">Dessert</label><br />
               </div>
             </div><br />
@@ -131,29 +158,29 @@ function Newrecipe() {
             <div>
             <label>Category <span className="required-star">*</span></label>
               <div>
-                <input type="checkbox" id="meat" name="category" value="meat" />
+                <input type="checkbox" id="meat" name="category" value="meat" onChange={handleChange}/>
                 <label htmlFor="meat">Meat</label><br />
               </div>
               <div>
-                <input type="checkbox" id="seafood" name="category" value="seafood" />
+                <input type="checkbox" id="seafood" name="category" value="seafood" onChange={handleChange}/>
                 <label htmlFor="seafood">Seafood</label><br />
               </div>
               <div>
-                <input type="checkbox" id="dairy" name="category" value="dairy" />
+                <input type="checkbox" id="dairy" name="category" value="dairy" onChange={handleChange}/>
                 <label htmlFor="dairy">Dairy</label><br />
               </div>
               <div>
-                <input type="checkbox" id="veggies" name="category" value="veggies" />
+                <input type="checkbox" id="veggies" name="category" value="veggies" onChange={handleChange}/>
                 <label htmlFor="veggies">Veggies</label><br />
               </div>
               <div>
-                <input type="checkbox" id="carbs" name="category" value="carbs" />
+                <input type="checkbox" id="carbs" name="category" value="carbs" onChange={handleChange}/>
                 <label htmlFor="carbs">Carbs</label><br />
               </div>
             </div><br />
 
             <label>Recipe Portion <span className="required-star">*</span></label><br />
-            <input type="number" name="portion" placeholder="This recipe is for how many people?" required />
+            <input type="number" name="portion" placeholder="This recipe is for how many people?" required value={formData.portion} onChange={handleChange}/>
             <br /><br />
 
             <div>
@@ -201,23 +228,23 @@ function Newrecipe() {
             </div><br />
             
             <label>Quick Description <span className="required-star">*</span></label><br />
-            <textarea id="description" name="description" rows="4" cols="40" placeholder="Write a short description" required />
+            <textarea id="description" name="description" rows="4" cols="40" placeholder="Write a short description" required value={formData.description} onChange={handleChange}/>
             <br /><br />
 
             <label>Preperation Time</label><br />
-            <input type="number" step="any" name="prep" placeholder="In hours and minutes" />
+            <input type="number" step="any" name="prep" placeholder="In hours and minutes" value={formData.prep} onChange={handleChange}/>
             <br /><br />
 
             <label>Total Time <span className="required-star">*</span></label><br />
-            <input type="number" step="any" name="total" placeholder="In hours and minutes" required />
+            <input type="number" step="any" name="total" placeholder="In hours and minutes" required value={formData.total} onChange={handleChange}/>
             <br /><br />
 
             <label>Upload Pictures </label><br />
-            <input type="file" id="img" name="img" accept="image/*" multiple/>
+            <input type="file" id="img" name="img" accept="image/*" onChange={handleChange}/>
             <br /><br />
 
             <label>Step By Step Guide <span className="required-star">*</span></label><br />
-            <textarea id="guide" name="guide" rows="4" cols="70" placeholder="Write the full recipe" required />
+            <textarea id="guide" name="guide" rows="4" cols="70" placeholder="Write the full recipe" required value={formData.guide} onChange={handleChange}/>
             
             <br /><br /><br /><br />
             <button type="submit">Submit!</button><br /><br />
