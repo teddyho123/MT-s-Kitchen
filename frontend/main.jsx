@@ -15,6 +15,7 @@ import Recipes from './src/routes/Recipes/Recipes.jsx'
 import NewRecipe from './src/routes/Newrecipe/Newrecipe.jsx'
 import AboutUs from './src/routes/Aboutus/Aboutus.jsx'
 import RecipeDetail from './src/routes/RecipeDetail/RecipeDetail.jsx';
+import Success from './src/routes/Newrecipe/Success.jsx';
 
 
 const router = createBrowserRouter([
@@ -49,6 +50,10 @@ const router = createBrowserRouter([
   {
     path: "/newrecipe",
     element: <NewRecipe />,
+  },
+  {
+    path: "/newrecipe/success",
+    element: <Success />,
   },
   {
     path: "/aboutus",
