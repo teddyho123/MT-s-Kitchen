@@ -14,6 +14,7 @@ import User from './src/routes/User/User.jsx'
 import Recipes from './src/routes/Recipes/Recipes.jsx'
 import NewRecipe from './src/routes/Newrecipe/Newrecipe.jsx'
 import AboutUs from './src/routes/Aboutus/Aboutus.jsx'
+import RecipeDetail from './src/routes/RecipeDetail/RecipeDetail.jsx';
 
 
 const router = createBrowserRouter([
@@ -22,31 +23,35 @@ const router = createBrowserRouter([
     element: <Navigate to="homepage" />,
   },
   {
-    path: "login",
+    path: "/login",
     element: <App />,
   },
   {
-    path: "homepage",
+    path: "/homepage",
     element: <Homepage />,
   },
   {
-    path: "register",
+    path: "/register",
     element: <Register />,
   },
   {
-    path: "user",
+    path: "/user",
     element: <User />,
   },
   {
-    path: "recipes",
+    path: "/recipes",
     element: <Recipes />,
   },
   {
-    path: "newrecipe",
+    path: "/recipes/:recipeId",
+    element: <RecipeDetail />,
+  },
+  {
+    path: "/newrecipe",
     element: <NewRecipe />,
   },
   {
-    path: "aboutus",
+    path: "/aboutus",
     element: <AboutUs />,
   },
 

@@ -39,7 +39,7 @@ function User() {
 
           <div className="profile-col">
             <h2>
-              Your Recipes <a href="#" className="new-recipe-button">Add a recipe</a>
+              Your Recipes <a href="/newrecipe" className="new-recipe-button">Add a recipe</a>
             </h2>
             <div className="recipe-container">
               <div className="h3-with-icon">
