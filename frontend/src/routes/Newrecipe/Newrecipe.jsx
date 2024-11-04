@@ -46,7 +46,8 @@ function Newrecipe() {
     prep: 0,
     total: 0,
     img: '',
-    guide: ''
+    guide: '',
+    like: 0
   });
 
   const navigate = useNavigate();

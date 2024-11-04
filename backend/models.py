@@ -16,6 +16,11 @@ class Recipe(Base):
     total = Column(Float, index=True, nullable=False)
     img = Column(String, index=True)
     guide = Column(String, index=True, nullable=False)
+    
+    likes = Column(Integer, default=0)
+    def increment_likes(self,session):
+        self.likes += 1
+        session.commit()
 
 
 class User(Base):
