@@ -122,6 +122,17 @@ def increment_recipe_likes(recipe_id: int, db: Session = Depends(get_db)):
     db.refresh(recipe)
     return {"likes": recipe.likes}
 
+@router.post("/recipes/{recipe_id}/unlike")
+def decrement_recipe_likes(recipe_id: int, db: Session = Depends(get_db)):
+    recipe = db.query(Recipe).filter(Recipe.id == recipe_id).first()
+    if not recipe:
+        raise HTTPException(status_code=404, detail="Recipe not found")
+    
+    recipe.likes = max(recipe.likes - 1, 0)  # Ensure likes do not go below 0
+    db.commit()
+    db.refresh(recipe)
+    return {"likes": recipe.likes}
+
 @router.delete("/deleterecipes/{recipe_id}")
 def read_recipe(recipe_id: int, db: Session = Depends(get_db)):
     recipe = db.query(Recipe).filter(Recipe.id == recipe_id).first()

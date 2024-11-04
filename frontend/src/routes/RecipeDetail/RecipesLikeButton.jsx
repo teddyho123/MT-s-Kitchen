@@ -3,6 +3,7 @@ import PropTypes from 'prop-types';
 
 function RecipeLikeButton({ recipeId }) {
     const [likes, setLikes] = useState(0);
+    const [isLiked, setIsLiked] = useState(false);
 
     useEffect(() => {
         // Fetch the current likes when the component loads
@@ -22,7 +23,11 @@ function RecipeLikeButton({ recipeId }) {
 
     const handleLikeClick = async () => {
         try {
-            const response = await fetch(`http://127.0.0.1:8000/recipes/${recipeId}/like`, {
+            const url = isLiked 
+                ? `http://127.0.0.1:8000/recipes/${recipeId}/unlike`
+                : `http://127.0.0.1:8000/recipes/${recipeId}/like`;
+
+            const response = await fetch(url, {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
@@ -32,6 +37,7 @@ function RecipeLikeButton({ recipeId }) {
             if (response.ok) {
                 const data = await response.json();
                 setLikes(data.likes); // Update likes with the new value from the response
+                setIsLiked(!isLiked);
             } else {
                 console.error(`Failed to increment likes: ${response.statusText}`);
             }
@@ -42,7 +48,7 @@ function RecipeLikeButton({ recipeId }) {
 
     return (
         <div>
-            <button onClick={handleLikeClick}>Like</button>
+            <button onClick={handleLikeClick}>{isLiked ? 'Unlike' : 'Like'}</button>
             <p>Likes: {likes}</p>
         </div>
     );
