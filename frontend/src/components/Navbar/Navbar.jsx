@@ -1,25 +1,27 @@
 import './Navbar.css';
-import logo from '../Assets/chef icon.png'
+import React, { useState } from 'react';
+import chef_logo from '../Assets/chef_logo.png'
 
-const Navbar = () => {
+function Navbar() {
+
     return (
-        <div className="nav-container">
-            <div className="logo">
+        <nav>
+            <div className="nav-container">
                 <a href="/homepage">
-                    <img src={logo} alt="logo" />
-                    <p>MT's Kitchen</p>
+                    <img src={chef_logo} alt="logo" className='logo'/>
+                    <h2>MT's Kitchen</h2>
                 </a>
             </div>
-            <nav className={`navbar`}>
-                <ul>
-                    <li><a href="/homepage">Home</a></li>
-                    <li><a href="/recipes">Recipes</a></li>
-                    <li><a href="/user">User Profile</a></li>
-                    <li><a href="/aboutus">About Us</a></li>
-                    <li><a href="/">Sign Out</a></li>
-                </ul>
-            </nav>
-        </div >
-    );
-};
+
+            <ul>
+                <li><a href="/homepage">Home</a></li>
+                <li><a href="/recipes">Recipes</a></li>
+                <li><a href="/user">User Profile</a></li>
+                <li><a href="/aboutus">About Us</a></li>
+                <li><a href="/">Sign Out</a></li>
+            </ul>
+        </nav>
+    )
+}
+
 export default Navbar;
