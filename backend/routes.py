@@ -19,6 +19,7 @@ class RecipeCreate(BaseModel):
     total: float
     guide: str
     img: Optional[str] = None
+    like: Optional[int] = 0
 
 class RecipeResponse(BaseModel):
     id: int
@@ -100,6 +101,17 @@ def read_recipe(recipe_id: int, db: Session = Depends(get_db)):
     if recipe is None:
         raise HTTPException(status_code=404, detail="Recipe not found")
     return recipe
+
+@router.post("/recipes/{recipe_id}/like")
+def increment_recipe_likes(recipe_id: int, db: Session = Depends(get_db)):
+    recipe = db.query(Recipe).filter(Recipe.id == recipe_id).first()
+    if not recipe:
+        raise HTTPException(status_code=404, detail="Recipe not found")
+    
+    recipe.likes += 1
+    db.commit()
+    db.refresh(recipe)
+    return {"likes": recipe.likes}
 
 @router.delete("/deleterecipes/{recipe_id}")
 def read_recipe(recipe_id: int, db: Session = Depends(get_db)):

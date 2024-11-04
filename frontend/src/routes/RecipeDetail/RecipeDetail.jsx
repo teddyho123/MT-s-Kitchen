@@ -2,6 +2,7 @@ import Footer from "../../components/Footer/Footer"
 import Navbar from "../../components/Navbar/Navbar"
 import { useParams } from "react-router-dom"
 import { useState, useEffect } from "react";
+import RecipeLikeButton from "./RecipesLikeButton";
 
 
 function RecipeDetail() {
@@ -31,7 +32,7 @@ function RecipeDetail() {
       <h1>Recipe Details</h1>
       {recipe ? (
         <div>
-          <h2>{recipe.name}</h2>
+          <h2>{recipe.name}<RecipeLikeButton recipeId={recipeId}/></h2>
           <p>Course: {recipe.course.join(", ")}</p>
           <p>Category: {recipe.category.join(", ")}</p>
           <p>Portion: {recipe.portion}</p>
