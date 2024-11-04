@@ -53,6 +53,15 @@ class UserResponse(BaseModel):
     class Config:
         orm_mode = True
 
+class UserUpdate(BaseModel):
+    username: Optional[str]
+    password: Optional[str]
+    email: Optional[str]
+    about: Optional[str]
+
+    class Config:
+        orm_mode = True
+
 @router.post("/newrecipe")
 async def create_recipe(
     name: str = Form(...),
@@ -148,6 +157,22 @@ def read_all_users(db: Session = Depends(get_db)):
     if not users:
         raise HTTPException(status_code=404, detail="No user found")
     return users
+
+@router.put("/user/{user_id}", response_model=UserResponse)
+async def update_user(user_id: int, user_update: UserUpdate, db: Session = Depends(get_db)):
+    user = db.query(User).filter(User.id == user_id).first()
+    if user is None:
+        raise HTTPException(status_code=404, detail="User not found")
+
+    # Update user details
+    user.username = user_update.username or user.username
+    user.password = user_update.password or user.password
+    user.email = user_update.email or user.email
+    user.about = user_update.about or user.about
+
+    db.commit()
+    db.refresh(user)
+    return user
 
 @router.delete("/deleteuser/{user_id}")
 def read_user(user_id: int, db: Session = Depends(get_db)):
