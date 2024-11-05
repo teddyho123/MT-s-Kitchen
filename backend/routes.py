@@ -1,9 +1,11 @@
-# routes.py
-from fastapi import APIRouter, Depends, HTTPException, FastAPI, Form, UploadFile, File
+from fastapi import APIRouter, Depends, HTTPException, Request, Form, FastAPI, UploadFile, File
+from fastapi.responses import JSONResponse
 from sqlalchemy.orm import Session
 from backend.database import get_db
-from backend.models import Recipe, User
+from backend.models import User, Recipe, UserRecipeLikes
 from pydantic import BaseModel
+from typing import Dict
+from passlib.context import CryptContext
 from typing import List, Dict, Union, Optional
 
 router = APIRouter()
@@ -52,6 +54,24 @@ class UserResponse(BaseModel):
 
     class Config:
         orm_mode = True
+
+class UserUpdate(BaseModel):
+    username: Optional[str]
+    password: Optional[str]
+    email: Optional[str]
+    about: Optional[str]
+
+    class Config:
+        orm_mode = True
+
+# Helper functions for login/register
+pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
+def verify_password(plain_password: str, hashed_password: str) -> bool:
+    return pwd_context.verify(plain_password, hashed_password)
+def get_user_by_email(email: str, db: Session) -> User:
+    return db.query(User).filter(User.email == email).first()
+
+
 
 @router.post("/newrecipe")
 async def create_recipe(
@@ -103,12 +123,25 @@ def read_recipe(recipe_id: int, db: Session = Depends(get_db)):
     return recipe
 
 @router.post("/recipes/{recipe_id}/like")
-def increment_recipe_likes(recipe_id: int, db: Session = Depends(get_db)):
+def increment_recipe_likes(recipe_id: int, user_id: int, db: Session = Depends(get_db)):
     recipe = db.query(Recipe).filter(Recipe.id == recipe_id).first()
     if not recipe:
         raise HTTPException(status_code=404, detail="Recipe not found")
     
     recipe.likes += 1
+    new_like = UserRecipeLikes(recipe_id=recipe_id, user_id=user_id)
+    db.add(new_like)
+    db.commit()
+    db.refresh(recipe)
+    return {"likes": recipe.likes}
+
+@router.post("/recipes/{recipe_id}/unlike")
+def decrement_recipe_likes(recipe_id: int, db: Session = Depends(get_db)):
+    recipe = db.query(Recipe).filter(Recipe.id == recipe_id).first()
+    if not recipe:
+        raise HTTPException(status_code=404, detail="Recipe not found")
+    
+    recipe.likes = max(recipe.likes - 1, 0)  # Ensure likes do not go below 0
     db.commit()
     db.refresh(recipe)
     return {"likes": recipe.likes}
@@ -149,6 +182,22 @@ def read_all_users(db: Session = Depends(get_db)):
         raise HTTPException(status_code=404, detail="No user found")
     return users
 
+@router.put("/user/{user_id}", response_model=UserResponse)
+async def update_user(user_id: int, user_update: UserUpdate, db: Session = Depends(get_db)):
+    user = db.query(User).filter(User.id == user_id).first()
+    if user is None:
+        raise HTTPException(status_code=404, detail="User not found")
+
+    # Update user details
+    user.username = user_update.username or user.username
+    user.password = user_update.password or user.password
+    user.email = user_update.email or user.email
+    user.about = user_update.about or user.about
+
+    db.commit()
+    db.refresh(user)
+    return user
+
 @router.delete("/deleteuser/{user_id}")
 def read_user(user_id: int, db: Session = Depends(get_db)):
     user = db.query(User).filter(User.id == user_id).first()
@@ -157,3 +206,37 @@ def read_user(user_id: int, db: Session = Depends(get_db)):
     db.delete(user)
     db.commit()
     return {"detail": "User deleted successfully"}
+
+@router.post("/login", response_model=Dict[str, Union[str, bool]])
+async def login(request: Request, db: Session = Depends(get_db)):
+    data = await request.json()
+    email = data.get("email")
+    password = data.get("password")
+
+    user = get_user_by_email(email, db)
+    if not user or user.password != password:
+        raise HTTPException(status_code=401, detail="Invalid email or password")
+
+    return {"success": True, "msg": "Login successful", "id": user.id}
+
+@router.post("/register")
+async def register(request: Request, db: Session = Depends(get_db)):
+    data = await request.json()
+    email = data.get("email")
+    password = data.get("password")
+    user = get_user_by_email(email, db)
+    if user:
+        raise HTTPException(status_code=400, detail="An account with this email already exists")
+    if not email or not password:
+        raise HTTPException(status_code=400, detail="Invalid email or password")
+    new_user = User(
+        email=email,
+        password=password,
+        username=email.split('@')[0],
+        about=""
+    )
+    db.add(new_user)
+    db.commit()
+    db.refresh(new_user)
+    return {"msg": "Registration successful", "id":new_user.id}
+    

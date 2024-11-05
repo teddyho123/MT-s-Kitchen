@@ -103,3 +103,9 @@
 	position:relative;
 	top:1px;
 }
+
+.success-message{
+  color: green;
+  font-weight: bold;
+  margin-top: 10px;
+}
