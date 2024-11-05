@@ -22,6 +22,7 @@ class RecipeCreate(BaseModel):
     guide: str
     img: Optional[str] = None
     like: Optional[int] = 0
+    user_id: str
 
 class RecipeResponse(BaseModel):
     id: int
@@ -35,11 +36,13 @@ class RecipeResponse(BaseModel):
     total: float
     guide: str
     img: Optional[str] = None
+    user_id: int
 
     class Config:
         orm_mode = True
 
 class UserCreate(BaseModel):
+    id: int
     username: str
     password: str
     email: str
@@ -85,12 +88,12 @@ async def create_recipe(
     total: float = Form(...),
     guide: str = Form(...),
     img: UploadFile = File(None),
+    user_id: str = Form(...),
     db: Session = Depends(get_db)
 ):
     # Parse ingredients from JSON string if needed
     import json
     parsed_ingredients = json.loads(ingredients)
-    
     db_recipe = Recipe(
         name=name,
         course=course,
@@ -101,7 +104,8 @@ async def create_recipe(
         prep=prep,
         total=total,
         img=img,
-        guide=guide
+        guide=guide,
+        user_id=str(user_id)
     )
     db.add(db_recipe)
     db.commit()
@@ -198,6 +202,27 @@ async def update_user(user_id: int, user_update: UserUpdate, db: Session = Depen
     db.refresh(user)
     return user
 
+@router.get("/user/{user_id}/recipes", response_model=List[RecipeResponse])
+def get_user_recipes(user_id: int, db: Session = Depends(get_db)):
+    user = db.query(User).filter(User.id == user_id).first()
+    if not user:
+        raise HTTPException(status_code=404, detail="User not found")
+    recipes = db.query(Recipe).filter(Recipe.user_id == user_id).all()
+    return recipes
+
+@router.get("/user/{user_id}/liked-recipes", response_model=List[RecipeResponse])
+def get_user_liked_recipes(user_id: int, db: Session = Depends(get_db)):
+    liked_recipes = (
+        db.query(Recipe)
+        .join(UserRecipeLikes, Recipe.id == UserRecipeLikes.recipe_id)
+        .filter(UserRecipeLikes.user_id == user_id)
+        .all()
+    )
+    if not liked_recipes:
+        raise HTTPException(status_code=404, detail="No liked recipes found")
+    return liked_recipes
+
+
 @router.delete("/deleteuser/{user_id}")
 def read_user(user_id: int, db: Session = Depends(get_db)):
     user = db.query(User).filter(User.id == user_id).first()
@@ -217,7 +242,7 @@ async def login(request: Request, db: Session = Depends(get_db)):
     if not user or user.password != password:
         raise HTTPException(status_code=401, detail="Invalid email or password")
 
-    return {"success": True, "msg": "Login successful", "id": user.id}
+    return {"success": True, "msg": "Login successful", "id": str(user.id)}
 
 @router.post("/register")
 async def register(request: Request, db: Session = Depends(get_db)):
@@ -238,5 +263,5 @@ async def register(request: Request, db: Session = Depends(get_db)):
     db.add(new_user)
     db.commit()
     db.refresh(new_user)
-    return {"msg": "Registration successful", "id":new_user.id}
+    return {"msg": "Registration successful", "id":str(new_user.id)}
     

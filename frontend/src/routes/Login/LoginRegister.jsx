@@ -94,11 +94,11 @@ const LoginRegister = () => {
 
       const result = await response.json();
       if (response.status === 200) {
-        alert(result.msg); // Show success message
-
         // Navigate to the user profile page with their ID
         if (result.id) {
-          navigate(`/user/${result.id}`);
+          localStorage.setItem("userId", result.id);
+          navigate(`/user`);
+          alert(`User ID: ${result.id}`);
         } else {
           console.error("User ID not returned in response");
         }
@@ -132,8 +132,10 @@ const LoginRegister = () => {
 
       // Gets result from backend. If email and password are valid go to home otherwise send error msg
       const result = await response.json();
+      console.log(result)
       if (result.success) {
         localStorage.setItem("userId", result.id);
+        alert(`User ID: ${result.id}`);
         navigate("/home");
       } else {
         setLoginError("Sorry, your email or password was incorrect. Please double-check and try again.")

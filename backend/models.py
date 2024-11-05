@@ -17,8 +17,7 @@ class Recipe(Base):
     total = Column(Float, index=True, nullable=False)
     img = Column(String, index=True)
     guide = Column(String, index=True, nullable=False)
-
-    user_id = Column(Integer, ForeignKey("users.id"), default=0)
+    user_id = Column(String, ForeignKey("users.id"), nullable=False)
     user = relationship("User", back_populates="recipes")
     likes = Column(Integer, default=0)
     liked_by_users = relationship(
@@ -52,7 +51,7 @@ class UserRecipeLikes(Base):
     __tablename__ = "user_recipe_likes"
     
     id = Column(Integer, primary_key=True, index=True)
-    user_id = Column(Integer, ForeignKey("users.id"), nullable=False)
-    recipe_id = Column(Integer, ForeignKey("recipes.id"), nullable=False)
+    user_id = Column(String, ForeignKey("users.id"), nullable=False)
+    recipe_id = Column(String, ForeignKey("recipes.id"), nullable=False)
 
     __table_args__ = (UniqueConstraint('user_id', 'recipe_id', name='_user_recipe_uc'),)
