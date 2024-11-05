@@ -1,8 +1,8 @@
-from fastapi import APIRouter, Depends, HTTPException, Request, Form, FastAPI, UploadFile, File
+from fastapi import Query, APIRouter, Depends, HTTPException, Request, Form, FastAPI, UploadFile, File
 from fastapi.responses import JSONResponse
 from sqlalchemy.orm import Session
 from backend.database import get_db
-from backend.models import User, Recipe, UserRecipeLikes
+from backend.models import User, Recipe
 from pydantic import BaseModel
 from typing import Dict
 from passlib.context import CryptContext
@@ -35,11 +35,14 @@ class RecipeResponse(BaseModel):
     total: float
     guide: str
     img: Optional[str] = None
+    like: Optional[int] = 0
+    user_id: int
 
     class Config:
         orm_mode = True
 
 class UserCreate(BaseModel):
+    id: int
     username: str
     password: str
     email: str
@@ -85,12 +88,13 @@ async def create_recipe(
     total: float = Form(...),
     guide: str = Form(...),
     img: UploadFile = File(None),
+    user_id: str = Form(...),
+    likes: int = Form(...),
     db: Session = Depends(get_db)
 ):
     # Parse ingredients from JSON string if needed
     import json
     parsed_ingredients = json.loads(ingredients)
-    
     db_recipe = Recipe(
         name=name,
         course=course,
@@ -101,7 +105,9 @@ async def create_recipe(
         prep=prep,
         total=total,
         img=img,
-        guide=guide
+        guide=guide,
+        user_id=str(user_id),
+        likes=0
     )
     db.add(db_recipe)
     db.commit()
@@ -123,27 +129,42 @@ def read_recipe(recipe_id: int, db: Session = Depends(get_db)):
     return recipe
 
 @router.post("/recipes/{recipe_id}/like")
-def increment_recipe_likes(recipe_id: int, user_id: int, db: Session = Depends(get_db)):
+def like_recipe(recipe_id: int, user_id: int, db: Session = Depends(get_db)):
     recipe = db.query(Recipe).filter(Recipe.id == recipe_id).first()
     if not recipe:
         raise HTTPException(status_code=404, detail="Recipe not found")
+
+    user = db.query(User).filter(User.id == user_id).first()
+    if not user:
+        raise HTTPException(status_code=404, detail="User not found")
     
-    recipe.likes += 1
-    new_like = UserRecipeLikes(recipe_id=recipe_id, user_id=user_id)
-    db.add(new_like)
-    db.commit()
-    db.refresh(recipe)
+    if recipe_id not in user.liked_recipes:
+        user.liked_recipes = user.liked_recipes + [recipe_id]
+        recipe.likes += 1
+        db.commit()
+        db.refresh(user)
+        db.refresh(recipe)
+    else:
+        raise HTTPException(status_code=404, detail="Already liked recipe")
+
     return {"likes": recipe.likes}
 
 @router.post("/recipes/{recipe_id}/unlike")
-def decrement_recipe_likes(recipe_id: int, db: Session = Depends(get_db)):
+def unlike_recipe(recipe_id: int, user_id: int, db: Session = Depends(get_db)):
     recipe = db.query(Recipe).filter(Recipe.id == recipe_id).first()
     if not recipe:
         raise HTTPException(status_code=404, detail="Recipe not found")
-    
-    recipe.likes = max(recipe.likes - 1, 0)  # Ensure likes do not go below 0
+
+    user = db.query(User).filter(User.id == user_id).first()
+    if not user:
+        raise HTTPException(status_code=404, detail="User not found")
+
+    user.liked_recipes = [id for id in user.liked_recipes if id != recipe_id]
+    recipe.likes = max(0, recipe.likes - 1)
     db.commit()
+    db.refresh(user)
     db.refresh(recipe)
+
     return {"likes": recipe.likes}
 
 @router.delete("/deleterecipes/{recipe_id}")
@@ -198,6 +219,27 @@ async def update_user(user_id: int, user_update: UserUpdate, db: Session = Depen
     db.refresh(user)
     return user
 
+@router.get("/user/{user_id}/recipes", response_model=List[RecipeResponse])
+def get_user_recipes(user_id: int, db: Session = Depends(get_db)):
+    user = db.query(User).filter(User.id == user_id).first()
+    if not user:
+        raise HTTPException(status_code=404, detail="User not found")
+    recipes = db.query(Recipe).filter(Recipe.user_id == user_id).all()
+    return recipes
+
+@router.get("/user/{user_id}/liked-recipes", response_model=List[RecipeResponse])
+def get_user_liked_recipes(user_id: int, db: Session = Depends(get_db)):
+    user = db.query(User).filter(User.id == user_id).first()
+    if not user:
+        raise HTTPException(status_code=404, detail="User not found")
+    print(f"User's liked recipes: {user.liked_recipes}")
+    
+    liked_recipes = db.query(Recipe).filter(Recipe.id.in_(user.liked_recipes)).all()
+    if not liked_recipes:
+        return []
+    return liked_recipes
+
+
 @router.delete("/deleteuser/{user_id}")
 def read_user(user_id: int, db: Session = Depends(get_db)):
     user = db.query(User).filter(User.id == user_id).first()
@@ -217,7 +259,7 @@ async def login(request: Request, db: Session = Depends(get_db)):
     if not user or user.password != password:
         raise HTTPException(status_code=401, detail="Invalid email or password")
 
-    return {"success": True, "msg": "Login successful", "id": user.id}
+    return {"success": True, "msg": "Login successful", "id": str(user.id)}
 
 @router.post("/register")
 async def register(request: Request, db: Session = Depends(get_db)):
@@ -238,5 +280,5 @@ async def register(request: Request, db: Session = Depends(get_db)):
     db.add(new_user)
     db.commit()
     db.refresh(new_user)
-    return {"msg": "Registration successful", "id":new_user.id}
-    
+    return {"msg": "Registration successful", "id":str(new_user.id)}
+

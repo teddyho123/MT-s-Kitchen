@@ -47,7 +47,8 @@ function Newrecipe() {
     total: 0,
     img: '',
     guide: '',
-    like: 0
+    likes: 0,
+    user_id: "0"
   });
 
   const navigate = useNavigate();
@@ -83,8 +84,9 @@ function Newrecipe() {
   // Function to handle form submission
   const handleSubmit = async (event) => {
     event.preventDefault();
-
+    const userId = localStorage.getItem("userId");
     const formDataObj = new FormData();
+    formDataObj.append("user_id", userId);
     formDataObj.append("name", formData.name);
     formData.course.forEach((item) => formDataObj.append("course", item));
     formData.category.forEach((item) => formDataObj.append("category", item));
@@ -94,6 +96,7 @@ function Newrecipe() {
     formDataObj.append("prep", formData.prep);
     formDataObj.append("total", formData.total);
     formDataObj.append("guide", formData.guide);
+    formDataObj.append("likes", 0);
     if (formData.img) {
       formDataObj.append("img", formData.img); // Add the image file
     }

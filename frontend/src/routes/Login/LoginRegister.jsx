@@ -1,5 +1,5 @@
 import { useState, useEffect, useCallback } from "react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useLocation } from "react-router-dom";
 import debounce from "lodash/debounce";
 import "./LoginRegister.css";
 import { FaLock, FaEnvelope } from "react-icons/fa";
@@ -9,6 +9,8 @@ const LoginRegister = () => {
   const [action, setAction] = useState("");
   const { isAuthenticated } = useAuth();
   const navigate = useNavigate();
+  const location = useLocation();
+  const redirectTo = location.state?.from?.pathname || "/home";
 
   useEffect(() => {
     // Redirect to home if already authenticated
@@ -94,11 +96,11 @@ const LoginRegister = () => {
 
       const result = await response.json();
       if (response.status === 200) {
-        alert(result.msg); // Show success message
-
         // Navigate to the user profile page with their ID
         if (result.id) {
-          navigate(`/user/${result.id}`);
+          localStorage.setItem("userId", result.id);
+          navigate(`/user`);
+          alert(`User ID: ${result.id}`);
         } else {
           console.error("User ID not returned in response");
         }
@@ -132,9 +134,11 @@ const LoginRegister = () => {
 
       // Gets result from backend. If email and password are valid go to home otherwise send error msg
       const result = await response.json();
+      console.log(result)
       if (result.success) {
         localStorage.setItem("userId", result.id);
-        navigate("/home");
+        alert(`User ID: ${result.id}`);
+        navigate(redirectTo, { replace: true });
       } else {
         setLoginError("Sorry, your email or password was incorrect. Please double-check and try again.")
       }
@@ -143,6 +147,8 @@ const LoginRegister = () => {
       console.error("Login error:", error);
     }
   };
+
+  
 
   return (
     <div className="loginRegisterComponent">
@@ -156,10 +162,7 @@ const LoginRegister = () => {
                 maxLength="254"
                 placeholder="Email"
                 value={inputs.email}
-                // onChange={(e) =>
-                //   setInputs({ ...inputs, email: e.target.value })
-                // }
-                onChange={handleEmailChange} // Debounced email change handler
+                onChange={handleEmailChange}
                 required
               />
               <FaEnvelope className="icon" />
