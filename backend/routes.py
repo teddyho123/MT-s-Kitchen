@@ -227,16 +227,16 @@ def get_user_recipes(user_id: int, db: Session = Depends(get_db)):
     recipes = db.query(Recipe).filter(Recipe.user_id == user_id).all()
     return recipes
 
-@router.get("/user/{user_id}/liked-recipes", response_model=List[RecipeResponse])
+@router.get("/users/{user_id}/liked-recipes", response_model=List[RecipeResponse])
 def get_user_liked_recipes(user_id: int, db: Session = Depends(get_db)):
-    liked_recipes = (
-        db.query(Recipe)
-        .join(UserRecipeLikes, Recipe.id == UserRecipeLikes.recipe_id)
-        .filter(UserRecipeLikes.user_id == user_id)
-        .all()
-    )
+    user = db.query(User).filter(User.id == user_id).first()
+    if not user:
+        raise HTTPException(status_code=404, detail="User not found")
+    print(f"User's liked recipes: {user.liked_recipes}")
+    
+    liked_recipes = db.query(Recipe).filter(Recipe.id.in_(user.liked_recipes)).all()
     if not liked_recipes:
-        raise HTTPException(status_code=404, detail="No liked recipes found")
+        return []
     return liked_recipes
 
 
