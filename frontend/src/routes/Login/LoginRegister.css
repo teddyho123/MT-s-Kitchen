@@ -1,0 +1,151 @@
+.loginRegisterComponent {
+    padding-top: 35%;
+    height: 100%;
+    width: 100%; /* Ensure it covers the available width */
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.loginRegisterComponent .container {
+    position: relative;
+    width: 420px;
+    height: 500px; /* Set a consistent height */
+    background: white;
+    border-radius: 10px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, .4);
+    display: flex;
+    align-items: center;
+    flex-direction: column; /* Ensure the content is centered vertically */
+    overflow: hidden;
+    transition: height .2s ease;
+    margin: auto; /* Center the container */
+}
+
+.loginRegisterComponent .container.register {
+    height: 500px;
+}
+
+.loginRegisterComponent .container .form-box {
+    width: 88%;
+    padding: 40px;
+}
+
+/* When login link is clicked slide login box into container */
+.loginRegisterComponent .container.login .form-box.login {
+    transition: translate .18s ease;
+    translate: 0px;
+}
+
+/* When register link is clicked move login box to the side */
+.loginRegisterComponent .container.register .form-box.login {
+    transition: none;
+    translate: -400px;
+}
+
+/* By default register box is out of container */
+.loginRegisterComponent .container .form-box.register {
+    position: absolute;
+    transition: none;
+    translate: 400px;
+}
+
+/* When register link is clicked slide register box into container */
+.loginRegisterComponent .container.register .form-box.register {
+    transition: translate .18s ease;
+    translate: 0px;
+    box-sizing: border-box;
+}
+
+.loginRegisterComponent form h1 {
+    font-size: 36px;
+    text-align: center;
+}
+
+.loginRegisterComponent form .input-box {
+    position: relative;
+    width: 95%;
+    height: 50px;
+    margin: 30px 0;
+    background: transparent;
+}
+
+.loginRegisterComponent .input-box input {
+    width: 95%;
+    height: 95%;
+    background: transparent;
+    border: none;
+    outline: none;
+    border: 2px solid rgba(5, 5, 5, .2);
+    border-radius: 10px;
+    font-size: 16px;
+    padding: 20px 45px 20px 20px;
+    box-sizing: border-box;
+}
+
+.loginRegisterComponent .input-box .icon {
+    position: absolute;
+    right: 20px;
+    top: 50%;
+    translate: 0 -50%;
+    font-size: 16px;
+}
+
+.loginRegisterComponent form button {
+    width: 95%;
+    height: 45px;
+    background: dodgerblue;
+    border: none;
+    outline: none;
+    border-radius: 15px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, .4);
+    cursor: pointer;
+    font-size: 16px;
+    color: white;
+    font-weight: 700;
+}
+
+.loginRegisterComponent form button:disabled {
+    opacity: 0.65;
+    cursor: not-allowed;
+    box-shadow: none;
+}
+
+.loginRegisterComponent form .register-link {
+    font-size: 14.5px;
+    text-align: center;
+    margin: 20px 0 15px;
+}
+
+.loginRegisterComponent .register-link p a {
+    color: dodgerblue;
+    text-decoration: none;
+    font-weight: 600;
+}
+
+.loginRegisterComponent .register-link p a:hover {
+    text-decoration: underline;
+}
+
+.loginRegisterComponent .terms {
+    text-align: center;
+    margin: 20px;
+    color: gray;
+    font-weight: 300;
+    font-size: 80%;
+}
+
+.loginRegisterComponent .input-box input.input-error {
+    border: 2px solid rgba(255, 0, 0, .5) !important;
+}
+
+.loginRegisterComponent .error-text {
+    text-align: center;
+    color: red;
+    font-weight: 300;
+    font-size: 0.9em;
+    padding-left: 10px;
+    padding-right: 10px;
+    margin-top: 5px;
+    margin-bottom: 20px;
+}

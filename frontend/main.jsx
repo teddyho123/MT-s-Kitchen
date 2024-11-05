@@ -6,37 +6,33 @@ import {
 } from "react-router-dom";
 import { Navigate } from "react-router-dom";
 import './index.css'
+import { AuthProvider } from './src/routes/AuthContext.jsx';
 
-import App from './src/routes/Login/App.jsx'
 import Homepage from './src/routes/Homepage/Homepage.jsx'
-import Register from './src/routes/Register/Register.jsx'
 import User from './src/routes/User/User.jsx'
 import Recipes from './src/routes/Recipes/Recipes.jsx'
 import NewRecipe from './src/routes/Newrecipe/Newrecipe.jsx'
 import AboutUs from './src/routes/Aboutus/Aboutus.jsx'
 import RecipeDetail from './src/routes/RecipeDetail/RecipeDetail.jsx';
 import Success from './src/routes/Newrecipe/Success.jsx';
+import LoginRegister from './src/routes/Login/LoginRegister.jsx';
 
 
 const router = createBrowserRouter([
   {
     path: "/",
-    element: <Navigate to="homepage" />,
+    element: <Navigate to="login" />,
   },
   {
     path: "/login",
-    element: <App />,
+    element: <LoginRegister />,
   },
   {
-    path: "/homepage",
+    path: "/home",
     element: <Homepage />,
   },
   {
-    path: "/register",
-    element: <Register />,
-  },
-  {
-    path: "/user/:userId",
+    path: "/user",
     element: <User />,
   },
   {
@@ -65,6 +61,8 @@ const router = createBrowserRouter([
 
 ReactDOM.createRoot(document.getElementById('root')).render(
   <React.StrictMode>
-    <RouterProvider router={router}/>
+    <AuthProvider>
+     <RouterProvider router={router}/>
+    </AuthProvider>
   </React.StrictMode>,
 )
