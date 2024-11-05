@@ -47,7 +47,8 @@ function Newrecipe() {
     total: 0,
     img: '',
     guide: '',
-    like: 0
+    like: 0,
+    user_id: "0"
   });
 
   const navigate = useNavigate();
@@ -83,8 +84,9 @@ function Newrecipe() {
   // Function to handle form submission
   const handleSubmit = async (event) => {
     event.preventDefault();
-
+    const userId = localStorage.getItem("userId");
     const formDataObj = new FormData();
+    formDataObj.append("user_id", userId);
     formDataObj.append("name", formData.name);
     formData.course.forEach((item) => formDataObj.append("course", item));
     formData.category.forEach((item) => formDataObj.append("category", item));
