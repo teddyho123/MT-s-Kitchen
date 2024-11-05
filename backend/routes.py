@@ -281,4 +281,4 @@ async def register(request: Request, db: Session = Depends(get_db)):
     db.commit()
     db.refresh(new_user)
     return {"msg": "Registration successful", "id":str(new_user.id)}
-    
+

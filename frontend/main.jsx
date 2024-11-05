@@ -16,6 +16,7 @@ import AboutUs from './src/routes/Aboutus/Aboutus.jsx'
 import RecipeDetail from './src/routes/RecipeDetail/RecipeDetail.jsx';
 import Success from './src/routes/Newrecipe/Success.jsx';
 import LoginRegister from './src/routes/Login/LoginRegister.jsx';
+import PrivateRoute from './src/components/PrivateRoute.jsx';
 
 
 const router = createBrowserRouter([
@@ -33,23 +34,23 @@ const router = createBrowserRouter([
   },
   {
     path: "/user",
-    element: <User />,
+    element: <PrivateRoute element={<User />} />,
   },
   {
     path: "/recipes",
-    element: <Recipes />,
+    element: <PrivateRoute element={<Recipes />} />,
   },
   {
     path: "/recipes/:recipeId",
-    element: <RecipeDetail />,
+    element: <PrivateRoute element={<RecipeDetail />} />,
   },
   {
     path: "/newrecipe",
-    element: <NewRecipe />,
+    element: <PrivateRoute element={<NewRecipe />} />,
   },
   {
     path: "/newrecipe/success",
-    element: <Success />,
+    element: <PrivateRoute element={<Success />} />,
   },
   {
     path: "/aboutus",
