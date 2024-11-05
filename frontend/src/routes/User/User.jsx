@@ -54,6 +54,7 @@ function User() {
     const fetchLikedRecipes = async () => {
       try {
         const response = await fetch(`http://127.0.0.1:8000/user/${storedUserId}/liked-recipes`);
+        if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
         const data = await response.json();
         setLikedRecipes(data);
       } catch (error) {

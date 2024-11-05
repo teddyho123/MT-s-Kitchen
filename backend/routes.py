@@ -227,7 +227,7 @@ def get_user_recipes(user_id: int, db: Session = Depends(get_db)):
     recipes = db.query(Recipe).filter(Recipe.user_id == user_id).all()
     return recipes
 
-@router.get("/users/{user_id}/liked-recipes", response_model=List[RecipeResponse])
+@router.get("/user/{user_id}/liked-recipes", response_model=List[RecipeResponse])
 def get_user_liked_recipes(user_id: int, db: Session = Depends(get_db)):
     user = db.query(User).filter(User.id == user_id).first()
     if not user:
