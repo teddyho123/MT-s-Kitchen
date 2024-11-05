@@ -24,25 +24,33 @@ function RecipeLikeButton({ recipeId }) {
     const handleLikeClick = async () => {
         try {
             const url = isLiked 
-                ? `http://127.0.0.1:8000/recipes/${recipeId}/unlike`
-                : `http://127.0.0.1:8000/recipes/${recipeId}/like`;
+                ? `http://127.0.0.1:8000/recipes/${recipeId}/unlike?user_id=${localStorage.getItem("userId")}`
+                : `http://127.0.0.1:8000/recipes/${recipeId}/like?user_id=${localStorage.getItem("userId")}`;
 
             const response = await fetch(url, {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
                 },
+                body: JSON.stringify({
+                    user_id: parseInt(localStorage.getItem("userId"),10),
+                }),
             });
 
-            if (response.ok) {
-                const data = await response.json();
-                setLikes(data.likes); // Update likes with the new value from the response
-                setIsLiked(!isLiked);
+            if (!response.ok) {
+                const errorData = await response.json();
+                if (errorData.detail === "Already liked recipe") {
+                    alert("Already liked recipe"); // Display alert if already liked
+                } else {
+                    throw new Error(`Failed to ${isLiked ? 'unlike' : 'like'} recipe: ${errorData.detail}`);
+                }
             } else {
-                console.error(`Failed to increment likes: ${response.statusText}`);
+                const data = await response.json();
+                setLikes(data.likes);
+                setIsLiked(!isLiked); // Toggle like state
             }
         } catch (error) {
-            console.error('Error incrementing likes:', error);
+            console.error("Error updating likes:", error);
         }
     };
 

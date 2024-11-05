@@ -47,7 +47,7 @@ function Newrecipe() {
     total: 0,
     img: '',
     guide: '',
-    like: 0,
+    likes: 0,
     user_id: "0"
   });
 
@@ -96,6 +96,7 @@ function Newrecipe() {
     formDataObj.append("prep", formData.prep);
     formDataObj.append("total", formData.total);
     formDataObj.append("guide", formData.guide);
+    formDataObj.append("likes", 0);
     if (formData.img) {
       formDataObj.append("img", formData.img); // Add the image file
     }

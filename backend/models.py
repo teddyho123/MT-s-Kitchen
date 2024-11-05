@@ -18,13 +18,7 @@ class Recipe(Base):
     img = Column(String, index=True)
     guide = Column(String, index=True, nullable=False)
     user_id = Column(String, ForeignKey("users.id"), nullable=False)
-    user = relationship("User", back_populates="recipes")
     likes = Column(Integer, default=0)
-    liked_by_users = relationship(
-        "User",
-        secondary="user_recipe_likes",
-        back_populates="liked_recipes"
-    )
 
     def increment_likes(self,session):
         self.likes += 1
@@ -39,19 +33,4 @@ class User(Base):
     password = Column(String, index=True, nullable=False)
     email = Column(String, index=True, nullable=False)
     about = Column(String, index=True, nullable=True)
-    recipes = relationship("Recipe", back_populates="user")
-    liked_recipes = relationship(
-        "Recipe",
-        secondary="user_recipe_likes",
-        back_populates="liked_by_users"
-    )
-
-
-class UserRecipeLikes(Base):
-    __tablename__ = "user_recipe_likes"
-    
-    id = Column(Integer, primary_key=True, index=True)
-    user_id = Column(String, ForeignKey("users.id"), nullable=False)
-    recipe_id = Column(String, ForeignKey("recipes.id"), nullable=False)
-
-    __table_args__ = (UniqueConstraint('user_id', 'recipe_id', name='_user_recipe_uc'),)
+    liked_recipes = Column(JSON, default=list, nullable=False)
