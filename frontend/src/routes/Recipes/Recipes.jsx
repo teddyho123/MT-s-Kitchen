@@ -1,9 +1,9 @@
 import { useState, useEffect } from "react";
-import { Link } from "react-router-dom";
 import Footer from "../../components/Footer/Footer";
 import Navbar from "../../components/Navbar/Navbar";
 import RecipeLikeButton from "../RecipeDetail/RecipesLikeButton";
 import "./Recipes.css";
+import RecipeCard from "../../components/RecipeCard/RecipeCard";
 
 function Recipes() {
   const [recipes, setRecipes] = useState([]);
@@ -39,18 +39,12 @@ function Recipes() {
         </div>
 
         <div className="card-grid">
-          {Array.isArray(recipes) ? recipes.map((recipe) => (
-            <div className="card" key={recipe.id}>
-              <img src={recipe.img || "default-image.jpg"} alt={recipe.name} />
-              <h3>{recipe.name}</h3>
-              <p>Prep Time: {recipe.prep} mins</p>
-              <p>Total Time: {recipe.total} mins</p>
-              <Link to={`/recipes/${recipe.id}`} className="view-recipe-link">View Recipe</Link>
-              <RecipeLikeButton recipeId={recipe.id}/>
-              <span>❤️</span>
-            </div>
-          )) : <h1>No Recipes available</h1>}
-        </div>
+        {Array.isArray(recipes)
+          ? recipes.map((recipe) => (
+              <RecipeCard key={recipe.id} recipe={recipe} />
+            ))
+          : <h1>No Recipes available</h1>}
+      </div>
 
         <Footer />
       </div>

@@ -87,16 +87,16 @@ nav ul li{
   color: rgb(255, 255, 255);
 } */
 
-/* .nav-container .logo a {
+.nav-container .logo a {
   display: flex;
   align-items: center;
   font-size: 28px;
-} */
+} 
 
-/* .nav-container .logo img {
+.nav-container .logo img {
   width: 60px;
   height: auto;
-} */
+} 
 
 /* .nav-container .logo:hover {
   cursor: pointer;
