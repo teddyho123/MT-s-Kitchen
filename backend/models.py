@@ -1,5 +1,6 @@
 # models.py
-from sqlalchemy import Column, Integer, String, Float, Boolean, JSON
+from sqlalchemy import Column, Integer, String, Float, Boolean, JSON, ForeignKey, UniqueConstraint
+from sqlalchemy.orm import relationship
 from backend.database import Base
 
 class Recipe(Base):
@@ -16,18 +17,20 @@ class Recipe(Base):
     total = Column(Float, index=True, nullable=False)
     img = Column(String, index=True)
     guide = Column(String, index=True, nullable=False)
-    
+    user_id = Column(String, ForeignKey("users.id"), nullable=False)
     likes = Column(Integer, default=0)
+
     def increment_likes(self,session):
         self.likes += 1
         session.commit()
 
 
 class User(Base):
-    __tablename__ = "user"
+    __tablename__ = "users"
 
     id = Column(Integer, primary_key=True, index=True)
     username = Column(String, index=True, nullable=False)
     password = Column(String, index=True, nullable=False)
     email = Column(String, index=True, nullable=False)
     about = Column(String, index=True, nullable=True)
+    liked_recipes = Column(JSON, default=list, nullable=False)

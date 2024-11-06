@@ -3,46 +3,71 @@ import PropTypes from 'prop-types';
 
 function RecipeLikeButton({ recipeId }) {
     const [likes, setLikes] = useState(0);
+    const [isLiked, setIsLiked] = useState(false);
+    const userId = parseInt(localStorage.getItem("userId"), 10);
 
     useEffect(() => {
-        // Fetch the current likes when the component loads
-        const fetchLikes = async () => {
+        const fetchLikeStatus = async () => {
             try {
-                const response = await fetch(`http://127.0.0.1:8000/recipes/${recipeId}`);
-                if (response.ok) {
-                    const data = await response.json();
+                const response = await fetch(`http://127.0.0.1:8000/user/${userId}/liked-recipes`);
+                if (!response.ok) {
+                    throw new Error(`Failed to fetch liked recipes: ${response.statusText}`);
+                }
+                const likedRecipes = await response.json();
+                if (Array.isArray(likedRecipes) && likedRecipes.some(r => r.id === recipeId)) {
+                    setIsLiked(true);
+                } else {
+                    setIsLiked(false);
+                }
+                const likesResponse = await fetch(`http://127.0.0.1:8000/recipes/${recipeId}`);
+                if (likesResponse.ok) {
+                    const data = await likesResponse.json();
                     setLikes(data.likes);
                 }
             } catch (error) {
-                console.error('Error fetching initial likes:', error);
+                console.error("Error fetching initial like status:", error);
             }
         };
-        fetchLikes();
-    }, [recipeId]);
+
+        fetchLikeStatus();
+    }, [recipeId, userId]);
 
     const handleLikeClick = async () => {
         try {
-            const response = await fetch(`http://127.0.0.1:8000/recipes/${recipeId}/like`, {
+            const url = isLiked 
+                ? `http://127.0.0.1:8000/recipes/${recipeId}/unlike?user_id=${localStorage.getItem("userId")}`
+                : `http://127.0.0.1:8000/recipes/${recipeId}/like?user_id=${localStorage.getItem("userId")}`;
+
+            const response = await fetch(url, {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
                 },
+                body: JSON.stringify({
+                    user_id: userId,
+                }),
             });
 
-            if (response.ok) {
-                const data = await response.json();
-                setLikes(data.likes); // Update likes with the new value from the response
+            if (!response.ok) {
+                const errorData = await response.json();
+                if (errorData.detail === "Already liked recipe") {
+                    alert("Already liked recipe"); // Display alert if already liked
+                } else {
+                    throw new Error(`Failed to ${isLiked ? 'unlike' : 'like'} recipe: ${errorData.detail}`);
+                }
             } else {
-                console.error(`Failed to increment likes: ${response.statusText}`);
+                const data = await response.json();
+                setLikes(data.likes);
+                setIsLiked(!isLiked); // Toggle like state
             }
         } catch (error) {
-            console.error('Error incrementing likes:', error);
+            console.error("Error updating likes:", error);
         }
     };
 
     return (
         <div>
-            <button onClick={handleLikeClick}>Like</button>
+            <button onClick={handleLikeClick}>{isLiked ? 'Unlike' : 'Like'}</button>
             <p>Likes: {likes}</p>
         </div>
     );

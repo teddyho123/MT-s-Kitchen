@@ -1,22 +1,24 @@
-import Navbar from "../../components/Navbar/Navbar"
-import Footer from "../../components/Footer/Footer"
-import paella from '../../components/Assets/paella.png'
-import ramen from '../../components/Assets/ramen.png'
-import sukiyaki from '../../components/Assets/sukiyaki.png'
-import takoyaki from '../../components/Assets/takoyaki.png'
-import "./User.css"
-import { useParams } from "react-router-dom"
+import Navbar from "../../components/Navbar/Navbar";
+import Footer from "../../components/Footer/Footer";
+import paella from '../../components/Assets/paella.png';
+import sukiyaki from '../../components/Assets/sukiyaki.png';
+import "./User.css";
 import { useState, useEffect } from "react";
 
 function User() {
-  const {userId} = useParams();
+  const storedUserId = localStorage.getItem("userId"); // Get the logged-in user ID directly
   const [user, setUser] = useState(null);
+  const [userRecipes, setUserRecipes] = useState([]);
+  const [likedRecipes, setLikedRecipes] = useState([]);
   const [isUpdated, setIsUpdated] = useState(false);
 
+  // Fetch user info
   useEffect(() => {
+    if (!storedUserId) return;
+
     const fetchUser = async () => {
       try {
-        const response = await fetch(`http://127.0.0.1:8000/user/${userId}`);
+        const response = await fetch(`http://127.0.0.1:8000/user/${storedUserId}`);
         if (!response.ok) {
           throw new Error(`HTTP error! status: ${response.status}`);
         }
@@ -27,7 +29,40 @@ function User() {
       }
     };
     fetchUser();
-  }, [userId]);
+  }, [storedUserId]);
+
+  // Fetch user's recipes
+  useEffect(() => {
+    if (!storedUserId) return;
+
+    const fetchUserRecipes = async () => {
+      try {
+        const response = await fetch(`http://127.0.0.1:8000/user/${storedUserId}/recipes`);
+        const data = await response.json();
+        setUserRecipes(data);
+      } catch (error) {
+        console.error("Error fetching user's recipes:", error);
+      }
+    };
+    fetchUserRecipes();
+  }, [storedUserId]);
+
+  // Fetch user's liked recipes
+  useEffect(() => {
+    if (!storedUserId) return;
+
+    const fetchLikedRecipes = async () => {
+      try {
+        const response = await fetch(`http://127.0.0.1:8000/user/${storedUserId}/liked-recipes`);
+        if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
+        const data = await response.json();
+        setLikedRecipes(data);
+      } catch (error) {
+        console.error("Error fetching liked recipes:", error);
+      }
+    };
+    fetchLikedRecipes();
+  }, [storedUserId]);
 
   // Update user info in state when input changes
   const handleChange = (event) => {
@@ -43,7 +78,7 @@ function User() {
     event.preventDefault();
 
     try {
-      const response = await fetch(`http://127.0.0.1:8000/user/${userId}`, {
+      const response = await fetch(`http://127.0.0.1:8000/user/${storedUserId}`, {
         method: "PUT",
         headers: {
           "Content-Type": "application/json",
@@ -60,95 +95,82 @@ function User() {
         throw new Error("Failed to update user information.");
       }
 
-      // Display success message on successful update
       setIsUpdated(true);
-      setTimeout(() => setIsUpdated(false), 10000);  // Hide message after 10 seconds
+      setTimeout(() => setIsUpdated(false), 10000);  // Hide success message after 10 seconds
     } catch (error) {
       console.error("Error updating user:", error);
       alert("Failed to update user information. Please try again.");
     }
   };
 
-
   return (
     <div className="home-main">
       <Navbar />
       <div className="profile">
         <div className="profile-col">
-        <h2>Profile</h2>
+          <h2>Profile</h2>
 
           {user ? (
             <form onSubmit={handleSubmit}>
-
               <h3>Username</h3>
-              <input name="username" value={user.username} onChange={handleChange}/>
+              <input name="username" value={user.username} onChange={handleChange} />
 
               <h3>Password</h3>
-              <input name="password" type="password" value={user.password} onChange={handleChange}/>
+              <input name="password" type="password" value={user.password} onChange={handleChange} />
 
               <h3>Email Address</h3>
-              <input name="email" type="email" value={user.email} onChange={handleChange}/>
+              <input name="email" type="email" value={user.email} onChange={handleChange} />
 
               <h3>About Myself</h3>
-              <textarea name="about" rows="6" value={user.about} onChange={handleChange}/>
-            
+              <textarea name="about" rows="6" value={user.about} onChange={handleChange} />
+
               <button type="submit" className="btn">Update Profile</button>
               {isUpdated && (
                 <p className="success-message">Profile updated successfully!</p>
               )}
-
             </form>
-
           ) : (
             <p>Loading User Info</p>
           )}
-
         </div>
 
         <div className="profile-col">
-          <h2>
-            Your Recipes <a href="/newrecipe" className="new-recipe-button">Add a recipe</a>
-          </h2>
-          <div className="recipe-container">
-            <div className="h3-with-icon">
-              <h3>Seafood Paella</h3>
-              <span className="edit-icon">✏️❌</span>
-            </div>
-            <img src={paella} alt="paella"/>
-          </div>
-          <div className="recipe-container">
-            <div className="h3-with-icon">
-              <h3>Chashu Ramen</h3>
-              <span className="edit-icon">✏️❌</span>
-            </div>
-            <img src={ramen} alt="ramen"/>
-          </div>
-          <div className="recipe-container">
-            <div className="h3-with-icon">
-              <h3>Takoyaki</h3>
-              <span className="edit-icon">✏️❌</span>
-            </div>
-            <img src={takoyaki} alt="takoyaki"/>
-          </div>
+          <h2>Your Recipes <a href="/newrecipe" className="new-recipe-button">Add a recipe</a></h2>
+          {userRecipes.length > 0 ? (
+            userRecipes.map((recipe) => (
+              <div className="recipe-container" key={recipe.id}>
+                <div className="h3-with-icon">
+                  <h3>{recipe.name}</h3>
+                  <span className="edit-icon">✏️❌</span>
+                </div>
+                <img src={recipe.image_url || paella} alt={recipe.name} />
+              </div>
+            ))
+          ) : (
+            <p>No recipes created yet.</p>
+          )}
         </div>
 
         <div className="profile-col">
-          <h2>
-            Saved/Liked Recipes
-          </h2>
-          <div className="recipe-container">
-            <div className="h3-with-icon">
-              <h3>Sukiyaki</h3>
-              <span className="edit-icon">❌</span>
-            </div>
-            <img src={sukiyaki} alt="sukiyaki"/>
-          </div>
+          <h2>Saved/Liked Recipes</h2>
+          {likedRecipes.length > 0 ? (
+            likedRecipes.map((recipe) => (
+              <div className="recipe-container" key={recipe.id}>
+                <div className="h3-with-icon">
+                  <h3>{recipe.name}</h3>
+                  <span className="edit-icon">❌</span>
+                </div>
+                <img src={recipe.image_url || sukiyaki} alt={recipe.name} />
+              </div>
+            ))
+          ) : (
+            <p>No liked recipes.</p>
+          )}
         </div>
-
       </div>
-      <Footer/>
+      <Footer />
     </div>
-  )
+  );
 }
-  
-export default User
+
+export default User;
