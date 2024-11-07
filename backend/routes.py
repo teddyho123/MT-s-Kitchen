@@ -239,7 +239,6 @@ def get_user_liked_recipes(user_id: int, db: Session = Depends(get_db)):
         return []
     return liked_recipes
 
-
 @router.delete("/deleteuser/{user_id}")
 def read_user(user_id: int, db: Session = Depends(get_db)):
     user = db.query(User).filter(User.id == user_id).first()

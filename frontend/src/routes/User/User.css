@@ -4,12 +4,12 @@
 }
 
 .profile{
-  max-width: 90%;
+  max-width: 100%;
   display: flex;
   align-items: flex-start;
   justify-content: center;
-  padding-left: 20px;
-  column-gap: 25%;
+  padding-left: auto;
+  column-gap: 20vh;
 }
 
 .profile-col{
@@ -37,6 +37,10 @@
   display: flex;
   align-items: center;
   margin: 10px 0;
+}
+
+.form {
+  background-color: #bc3315;
 }
 
 .profile form input, .profile form textarea{

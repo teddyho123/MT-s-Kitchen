@@ -9,6 +9,13 @@ function RecipeLikeButton({ recipeId }) {
     useEffect(() => {
         const fetchLikeStatus = async () => {
             try {
+                if (isNaN(userId)) {
+                    const likesResponse = await fetch(`http://127.0.0.1:8000/recipes/${recipeId}`);
+                    if (likesResponse.ok) {
+                    const data = await likesResponse.json();
+                    setLikes(data.likes);
+                }
+                return;}
                 const response = await fetch(`http://127.0.0.1:8000/user/${userId}/liked-recipes`);
                 if (!response.ok) {
                     throw new Error(`Failed to fetch liked recipes: ${response.statusText}`);
@@ -33,6 +40,10 @@ function RecipeLikeButton({ recipeId }) {
     }, [recipeId, userId]);
 
     const handleLikeClick = async () => {
+        if (isNaN(userId)) {
+            alert("Please log in to like recipes.");
+            return;
+        }
         try {
             const url = isLiked 
                 ? `http://127.0.0.1:8000/recipes/${recipeId}/unlike?user_id=${localStorage.getItem("userId")}`
