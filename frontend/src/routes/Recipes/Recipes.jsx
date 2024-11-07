@@ -69,26 +69,21 @@ function Recipes() {
         <h1>Recipes</h1>
 
         <div className="button-group">
-          <button onClick={() => setSelectedCourse([])} className="btn">All</button>
-          <button onClick={() => handleCourseClick("breakfast")} className="btn">Breakfast</button>
-          <button onClick={() => handleCourseClick("brunch")} className="btn">Brunch</button>
-          <button onClick={() => handleCourseClick("lunch")} className="btn">Lunch</button>
-          <button onClick={() => handleCourseClick("dinner")} className="btn">Dinner</button>
-          <button onClick={() => handleCourseClick("dessert")} className="btn">Dessert</button>
+          <button onClick={() => handleCourseClick("breakfast")} className={`btn ${selectedCourse.includes("breakfast") ? "selected" : ""}`}>Breakfast</button>
+          <button onClick={() => handleCourseClick("brunch")} className={`btn ${selectedCourse.includes("brunch") ? "selected" : ""}`}>Brunch</button>
+          <button onClick={() => handleCourseClick("lunch")} className={`btn ${selectedCourse.includes("lunch") ? "selected" : ""}`}>Lunch</button>
+          <button onClick={() => handleCourseClick("dinner")} className={`btn ${selectedCourse.includes("dinner") ? "selected" : ""}`}>Dinner</button>
+          <button onClick={() => handleCourseClick("dessert")} className={`btn ${selectedCourse.includes("dessert") ? "selected" : ""}`}>Dessert</button>
+          <button onClick={() => setSelectedCourse([])} className="resetbtn">Reset</button>
         </div>
 
         <div className="button-group">
-          <button onClick={() => setSelectedCategory([])} className="btn">All</button>
-          <button onClick={() => handleCategoryClick("meat")} className="btn">Meat</button>
-          <button onClick={() => handleCategoryClick("seafood")} className="btn">Seafood</button>
-          <button onClick={() => handleCategoryClick("dairy")} className="btn">Dairy</button>
-          <button onClick={() => handleCategoryClick("veggies")} className="btn">Veggies</button>
-          <button onClick={() => handleCategoryClick("carbs")} className="btn">Carbs</button>
-        </div>
-
-        <div className="button-group">
-          <p>Selected Course Tags: {selectedCourse.length > 0 ? selectedCourse.join(', ') : "All"}</p>
-          <p>Selected Category Tags: {selectedCategory.length > 0 ? selectedCategory.join(', ') : "All"}</p>
+          <button onClick={() => handleCategoryClick("meat")} className={`btn ${selectedCategory.includes("meat") ? "selected" : ""}`}>Meat</button>
+          <button onClick={() => handleCategoryClick("seafood")} className={`btn ${selectedCategory.includes("seafood") ? "selected" : ""}`}>Seafood</button>
+          <button onClick={() => handleCategoryClick("dairy")} className={`btn ${selectedCategory.includes("dairy") ? "selected" : ""}`}>Dairy</button>
+          <button onClick={() => handleCategoryClick("veggies")} className={`btn ${selectedCategory.includes("veggies") ? "selected" : ""}`}>Veggies</button>
+          <button onClick={() => handleCategoryClick("carbs")} className={`btn ${selectedCategory.includes("carbs") ? "selected" : ""}`}>Carbs</button>
+          <button onClick={() => setSelectedCategory([])} className="resetbtn">Reset</button>
         </div>
 
         <div className="card-grid">
