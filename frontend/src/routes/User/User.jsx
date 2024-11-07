@@ -141,7 +141,8 @@ function User() {
               <div className="recipe-container" key={recipe.id}>
                 <div className="h3-with-icon">
                   <h3>{recipe.name}</h3>
-                  <span className="edit-icon">✏️❌</span>
+                  <span className="edit-icon">✏️</span>
+                  <span className="edit-icon">❌</span>
                 </div>
                 <img src={recipe.image_url || paella} alt={recipe.name} />
               </div>

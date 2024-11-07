@@ -61,20 +61,12 @@ function Homepage() {
                     </div>
                 </Link>
             )) : <h1>No Recipes available</h1>}
-        </div>
+          </div>
 
 
-        </div>
+          </div>
         </div>
 
-
-        <div className="trending-container">
-          <h1 className="title">Today's Recipe</h1>
-          <p className="title">Seafood Paella</p>
-        </div>
-        <div className="sukiyaki">
-          <img src={paella} alt="paella"/>
-        </div>
         <Footer/>
       </main>
     )
