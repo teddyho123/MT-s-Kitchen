@@ -2,7 +2,7 @@
 width: 240px;
 height: 320px; 
 background-color: #f0f0f0;
-border: 2px solid #992424;
+border: 0px;
 border-radius: 15px;
 overflow: hidden; 
 text-align: center;
@@ -21,7 +21,7 @@ z-index: 1;
 }
 
 .card-info {
-position: absolute;
+position: center;
 bottom: 0;
 width: 100%;
 padding: 10px;
@@ -44,3 +44,40 @@ font-size: 18px;
 .card p {
 font-size: 14px;
 }
+
+.card-button {
+    position: absolute;
+    top: 10px; 
+    left: 10px; 
+    width: 40px;
+    height: 40px;
+    padding: 8px;
+    font-size: 16px;
+    border-radius: 50%;
+    background-color: rgba(255, 255, 255, 0.5);
+    border: 0px;
+    cursor: pointer;
+    transition: background-color 0.3s, transform 0.2s ease;
+  }
+  
+  .card-button.liked {
+    background-color: rgba(237, 152, 195, 0.7);
+  }
+  
+  .card-button:hover {
+    transform: scale(1.1);
+  }
+  
+  .card-button .icon {
+    font-size: 20px;
+    color: rgba(255, 255, 255, 0.7); 
+    transition: color 0.3s ease;
+  }
+  
+  .card-button.liked .icon {
+    color: rgba(234, 108, 171, 0.7); 
+  }
+  
+  .card-button:hover .icon {
+    color: rgba(255, 255, 255, 1); 
+  }
