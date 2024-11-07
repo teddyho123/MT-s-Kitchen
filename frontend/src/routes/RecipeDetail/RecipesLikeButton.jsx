@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import PropTypes from 'prop-types';
+import { FaHeart } from 'react-icons/fa';  // Import heart icon from react-icons
 
 function RecipeLikeButton({ recipeId }) {
     const [likes, setLikes] = useState(0);
@@ -77,10 +78,12 @@ function RecipeLikeButton({ recipeId }) {
     };
 
     return (
-        <div>
-            <button onClick={handleLikeClick}>{isLiked ? 'Unlike' : 'Like'}</button>
-            <p>Likes: {likes}</p>
-        </div>
+        <button 
+            className={`card-button ${isLiked ? 'liked' : ''}`} // Add 'liked' class if recipe is liked
+            onClick={handleLikeClick}
+        >
+            <FaHeart className="icon" />
+        </button>
     );
 }
 

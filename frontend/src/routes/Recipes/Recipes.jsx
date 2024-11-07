@@ -1,9 +1,8 @@
 import { useState, useEffect } from "react";
 import Footer from "../../components/Footer/Footer";
 import Navbar from "../../components/Navbar/Navbar";
-import RecipeLikeButton from "../RecipeDetail/RecipesLikeButton";
+import RecipeCard from "../../components/RecipeCard/RecipeCard.jsx";
 import "./Recipes.css";
-import RecipeCard from "../../components/RecipeCard/RecipeCard";
 
 function Recipes() {
   const [recipes, setRecipes] = useState([]);
