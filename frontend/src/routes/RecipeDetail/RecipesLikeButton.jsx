@@ -83,6 +83,7 @@ function RecipeLikeButton({ recipeId }) {
             onClick={handleLikeClick}
         >
             <FaHeart className="icon" />
+            <span>{likes}</span>
         </button>
     );
 }
