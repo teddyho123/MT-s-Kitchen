@@ -18,8 +18,22 @@
 
 }
 
-.button-group button {
-  background-color: #8d2421;
+.btn {
+  background-color: #c56461;
+  padding: 10px;
+  font-size: 16px;
+  border-radius: 15px;
+  cursor: pointer;
+}
+
+.btn.selected {
+  background-color: #007bff; /* Selected background color */
+  color: #fff; /* Selected text color */
+  border-color: #007bff;
+}
+
+.resetbtn {
+  background-color: #8b8787;
   padding: 10px;
   font-size: 16px;
   border-radius: 15px;
