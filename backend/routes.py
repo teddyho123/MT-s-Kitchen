@@ -176,6 +176,13 @@ def read_recipe(recipe_id: int, db: Session = Depends(get_db)):
     db.commit()
     return {"detail": "Recipe deleted successfully"}
 
+@router.get("/recipes/top")
+def get_top_recipes(db: Session = Depends(get_db)):
+    top_recipes = db.query(Recipe).order_by(Recipe.likes.desc()).limit(5).all()
+    if not top_recipes:
+        raise HTTPException(status_code=404, detail="No recipes found")
+    return top_recipes
+
 @router.post("/newuser")
 async def create_user(user: UserCreate, db: Session = Depends(get_db)):
     print(user.dict())  # Print data to server logs for inspection

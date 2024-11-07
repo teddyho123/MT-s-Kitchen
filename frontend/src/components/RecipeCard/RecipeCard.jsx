@@ -22,6 +22,8 @@ function RecipeCard({ recipe }) {
         <h3>{recipe.name}</h3>
         <p>Prep Time: {recipe.prep} mins</p>
         <p>Total Time: {recipe.total} mins</p>
+        <br/>
+        <p>{recipe.description}</p>
       </div>
     </Link>
   );
