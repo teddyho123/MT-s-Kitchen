@@ -65,6 +65,14 @@
   cursor: pointer;
 }
 
+.delete-icon {
+  cursor: pointer;
+}
+
+.unlike-icon {
+  cursor: pointer;
+}
+
 .recipe-container {
   border-style: solid;
   border-color: #676767;
