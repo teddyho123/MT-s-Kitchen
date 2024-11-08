@@ -10,7 +10,7 @@ function Homepage() {
   useEffect(() => {
     const fetchRecipes = async () => {
       try {
-        const response = await fetch("http://127.0.0.1:8000/recipes/top");
+        const response = await fetch("http://127.0.0.1:8000/toprecipes"); 
         const data = await response.json();
         setRecipes(data);
       } catch (error) {

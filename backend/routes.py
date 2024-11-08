@@ -176,7 +176,7 @@ def read_recipe(recipe_id: int, db: Session = Depends(get_db)):
     db.commit()
     return {"detail": "Recipe deleted successfully"}
 
-@router.get("/recipes/top")
+@router.get("/toprecipes", response_model=List[RecipeResponse])
 def get_top_recipes(db: Session = Depends(get_db)):
     top_recipes = db.query(Recipe).order_by(Recipe.likes.desc()).limit(5).all()
     if not top_recipes:
