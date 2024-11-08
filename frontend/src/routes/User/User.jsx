@@ -4,6 +4,7 @@ import paella from '../../components/Assets/paella.png';
 import sukiyaki from '../../components/Assets/sukiyaki.png';
 import "./User.css";
 import { useState, useEffect } from "react";
+import { Link } from "react-router-dom";
 
 function User() {
   const storedUserId = localStorage.getItem("userId"); // Get the logged-in user ID directly
@@ -73,6 +74,24 @@ function User() {
     }));
   };
 
+  const handleDelete = async (recipeId) => {
+    const confirmDelete = window.confirm("Are you sure you want to delete this recipe?");
+    if (!confirmDelete) return;
+    try {
+      const response = await fetch(`http://127.0.0.1:8000/deleterecipes/${recipeId}`, {
+        method: "DELETE",
+      });
+      if (!response.ok) {
+        throw new Error(`Error: ${response.statusText}`);
+      }
+      setUserRecipes((prevRecipes) => prevRecipes.filter((recipe) => recipe.id !== recipeId));
+      console.log("Recipe deleted successfully");
+    } catch (error) {
+      console.error("Error deleting recipe:", error);
+      alert("Failed to delete the recipe. Please try again.");
+    }
+  };
+
   // Submit updated user info to backend
   const handleSubmit = async (event) => {
     event.preventDefault();
@@ -102,6 +121,30 @@ function User() {
       alert("Failed to update user information. Please try again.");
     }
   };
+  
+  const handleUnlike = async (recipeId) => {
+    const confirmUnlike = window.confirm("Are you sure you want to unlike this recipe?");
+    if (!confirmUnlike) return;
+
+    try {
+      const response = await fetch(`http://127.0.0.1:8000/recipes/${recipeId}/unlike?user_id=${localStorage.getItem("userId")}`, {
+        method: "POST",
+      });
+      if (!response.ok) {
+        throw new Error("Failed to unlike the recipe");
+      }
+
+      // Remove the unliked recipe from the state to update the UI
+      setLikedRecipes((prevLikedRecipes) =>
+        prevLikedRecipes.filter((recipe) => recipe.id !== recipeId)
+      );
+      console.log("Recipe unliked successfully");
+    } catch (error) {
+      console.error("Error unliking recipe:", error);
+      alert("Failed to unlike the recipe. Please try again.");
+    }
+  };
+
 
   return (
     <div className="home-main">
@@ -141,10 +184,14 @@ function User() {
               <div className="recipe-container" key={recipe.id}>
                 <div className="h3-with-icon">
                   <h3>{recipe.name}</h3>
-                  <span className="edit-icon">✏️</span>
-                  <span className="edit-icon">❌</span>
+                  <Link to={`/recipes/${recipe.id}/edit`} className="edit-icon">✏️</Link>
+                  <span className="delete-icon" onClick={() => handleDelete(recipe.id)}
+                  style={{ cursor: "pointer" }}>❌</span>
                 </div>
-                <img src={recipe.image_url || paella} alt={recipe.name} />
+                <Link to={`/recipes/${recipe.id}`}>
+                  <img src={recipe.image_url || paella} alt={recipe.name} style={{ cursor: 
+                  "pointer" }}/>
+                </Link>
               </div>
             ))
           ) : (
@@ -153,15 +200,18 @@ function User() {
         </div>
 
         <div className="profile-col">
-          <h2>Saved/Liked Recipes</h2>
+          <h2>Liked Recipes</h2>
           {likedRecipes.length > 0 ? (
             likedRecipes.map((recipe) => (
               <div className="recipe-container" key={recipe.id}>
                 <div className="h3-with-icon">
                   <h3>{recipe.name}</h3>
-                  <span className="edit-icon">❌</span>
+                  <span className="unlike-icon" onClick={() => handleUnlike(recipe.id)} style={{ cursor: "pointer"}}>💔</span>
                 </div>
-                <img src={recipe.image_url || sukiyaki} alt={recipe.name} />
+                <Link to={`/recipes/${recipe.id}`}>
+                  <img src={recipe.image_url || sukiyaki} alt={recipe.name} style={{ cursor: 
+                  "pointer" }}/>
+                </Link>
               </div>
             ))
           ) : (

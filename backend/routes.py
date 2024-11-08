@@ -1,3 +1,4 @@
+import json
 from fastapi import Query, APIRouter, Depends, HTTPException, Request, Form, FastAPI, UploadFile, File
 from fastapi.responses import JSONResponse
 from sqlalchemy.orm import Session
@@ -166,6 +167,51 @@ def unlike_recipe(recipe_id: int, user_id: int, db: Session = Depends(get_db)):
     db.refresh(recipe)
 
     return {"likes": recipe.likes}
+
+@router.put("/recipes/{recipe_id}/edit")
+async def update_recipe(
+    recipe_id: int,
+    name: Optional[str] = Form(None),
+    course: Optional[List[str]] = Form(None),
+    category: Optional[List[str]] = Form(None),
+    portion: Optional[int] = Form(None),
+    ingredients: Optional[str] = Form(None),
+    description: Optional[str] = Form(None),
+    prep: Optional[float] = Form(None),
+    total: Optional[float] = Form(None),
+    guide: Optional[str] = Form(None),
+    img: Optional[UploadFile] = File(None),
+    user_id: str = Form(...),
+    db: Session = Depends(get_db)
+):
+    db_recipe = db.query(Recipe).filter(Recipe.id == recipe_id).first()
+    if db_recipe is None:
+        raise HTTPException(status_code=404, detail="Recipe not found")
+    if db_recipe.user_id != user_id:
+        raise HTTPException(status_code=403, detail="Not authorized to edit this recipe")
+    if name is not None:
+        db_recipe.name = name
+    if course is not None:
+        db_recipe.course = course
+    if category is not None:
+        db_recipe.category = category
+    if portion is not None:
+        db_recipe.portion = portion
+    if ingredients is not None:
+        db_recipe.ingredients = json.loads(ingredients)
+    if description is not None:
+        db_recipe.description = description
+    if prep is not None:
+        db_recipe.prep = prep
+    if total is not None:
+        db_recipe.total = total
+    if guide is not None:
+        db_recipe.guide = guide
+    if img is not None:
+        db_recipe.img = img
+    db.commit()
+    db.refresh(db_recipe)
+    return db_recipe
 
 @router.delete("/deleterecipes/{recipe_id}")
 def read_recipe(recipe_id: int, db: Session = Depends(get_db)):

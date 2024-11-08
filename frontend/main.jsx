@@ -17,6 +17,7 @@ import RecipeDetail from './src/routes/RecipeDetail/RecipeDetail.jsx';
 import Success from './src/routes/Newrecipe/Success.jsx';
 import LoginRegister from './src/routes/Login/LoginRegister.jsx';
 import PrivateRoute from './src/components/PrivateRoute.jsx';
+import RecipeEdit from './src/routes/RecipeDetail/RecipeEdit.jsx';
 
 
 const router = createBrowserRouter([
@@ -43,6 +44,10 @@ const router = createBrowserRouter([
   {
     path: "/recipes/:recipeId",
     element: <RecipeDetail />,
+  },
+  {
+    path: "/recipes/:recipeId/edit",
+    element: <RecipeEdit />,
   },
   {
     path: "/newrecipe",
